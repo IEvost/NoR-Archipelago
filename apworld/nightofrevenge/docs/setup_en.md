@@ -46,12 +46,16 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
 
 | Key | Function |
 |---|---|
-| F1 | Archipelago window (title screen) |
+| F1 | Archipelago window (title screen; in game it opens the window to reconnect) |
 | B / gamepad item-switch | Witch's Market at a save point |
 | G / hold Jump 2 s | Skip and respawn after a death or DeathLink |
 | ` or F12 | Backup console (give items/keys if you are stuck) |
 
 ## Troubleshooting
-- Connection fails: check the room page for the current port; check `BepInEx/LogOutput.log`.
+- Connection fails: check the room page for the current port. If the room moved to a new port while you play,
+  press **F1** in game, enter the new address and connect - the save accepts any address of the same seed and
+  slot and remembers it. Details are in `BepInEx/LogOutput.log`.
+- Chat, hints and server notices appear on screen (disable with `ShowServerMessages = false` in
+  `BepInEx/config/nor.archipelago.client.cfg`).
 - Items arrive only while you are in control (not during menus, events or defeat scenes) - this is intended.
 - Stuck because of a logic error: open the console (`) and use `give key lab|pilgrimage|rooftop` or `give <code>`.

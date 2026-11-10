@@ -77,6 +77,7 @@ namespace NoR.Archipelago
             }
 
             var session = _conn.Session;
+            session.MessageLog.OnMessageReceived += msg => _conn.Post(() => OnServerMessage(msg));
             session.Socket.SocketClosed += reason => _conn.Post(() =>
             {
                 _notes.Add("Archipelago: disconnected (" + reason + ")", Notifications.Kind.Error);
@@ -99,6 +100,12 @@ namespace NoR.Archipelago
                     _notes.Add("Archipelago: this save belongs to slot " + st.ApSlot + " of another seed - disconnected.", Notifications.Kind.Error);
                     Disconnect();
                     return;
+                }
+                // Same seed and slot on a new address (archipelago.gg rooms change port after idling): remember it.
+                if (!string.Equals(st.ApServer, _server, StringComparison.OrdinalIgnoreCase))
+                {
+                    Plugin.Log.LogInfo("Server address updated: " + st.ApServer + " -> " + _server);
+                    st.ApServer = _server;
                 }
                 Resync(st);
             }
@@ -253,6 +260,23 @@ namespace NoR.Archipelago
             if (status == null || !status._SOUSA) return false;             // menus, events, H-scenes, loading
             if (NoR.Randomizer.Shop.ShopWindow.Current != null) return false;
             return GameObject.Find("ItemGet_info") != null;
+        }
+
+        // ------------------------------------------------------------------ server messages
+
+        /// <summary>
+        /// Shows chat, hints and server notices. Item sends/receives involving this slot are already shown by the
+        /// check/delivery code, so ItemSend messages are skipped here.
+        /// </summary>
+        private void OnServerMessage(global::Archipelago.MultiClient.Net.MessageLog.Messages.LogMessage msg)
+        {
+            if (!Plugin.ShowServerMessages) return;
+            if (msg is global::Archipelago.MultiClient.Net.MessageLog.Messages.ItemSendLogMessage
+                && !(msg is global::Archipelago.MultiClient.Net.MessageLog.Messages.HintItemSendLogMessage)) return;
+            string text = msg.ToString();
+            if (string.IsNullOrEmpty(text)) return;
+            var kind = msg is global::Archipelago.MultiClient.Net.MessageLog.Messages.HintItemSendLogMessage ? Notifications.Kind.Sent : Notifications.Kind.Info;
+            _notes.Add(text, kind);
         }
 
         // ------------------------------------------------------------------ scouting (names for messages and the shop)

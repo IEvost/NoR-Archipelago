@@ -36,6 +36,8 @@ namespace NoR.Archipelago
         private static ConfigEntry<bool> _diagnostics;
         internal static Connection.BridgeMode BridgeMode { get { return _bridge.Value; } }
         internal static string Password { get { return _password.Value; } }
+        private static ConfigEntry<bool> _serverMessages;
+        internal static bool ShowServerMessages { get { return _serverMessages.Value; } }
 
         private Connection _conn;
         internal ApClient Client;
@@ -57,6 +59,7 @@ namespace NoR.Archipelago
             _testSlot = Config.Bind("Test", "Slot", "Tester", "Slot used by the F7 connection test.");
             _testGame = Config.Bind("Test", "Game", "ChecksFinder",
                 "Game name of the slot used by the F7 connection test (any existing slot works; the test logs in as TextOnly).");
+            _serverMessages = Config.Bind("Display", "ShowServerMessages", true, "Show chat, hints and server notices on screen.");
             _diagnostics = Config.Bind("Test", "DiagnosticsOnStart", false,
                 "At startup, check the runtime's own TLS support and the bridge against archipelago.gg (writes results to the log).");
 
@@ -75,7 +78,30 @@ namespace NoR.Archipelago
             _conn.Pump();
             Client.Update();
             if (Input.GetKeyDown(KeyCode.F7)) ConnectionTest();
-            if (Input.GetKeyDown(KeyCode.F1)) _showWindow = !_showWindow;
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                if (AtTitle) _showWindow = !_showWindow;
+                else SetInGameWindow(!_showInGame);
+            }
+            if (AtTitle && _showInGame) SetInGameWindow(false);
+        }
+
+        // In game the window is hidden by default (F1 opens it, e.g. to reconnect after the room changed its port).
+        private bool _showInGame, _lockedControl;
+
+        private void SetInGameWindow(bool open)
+        {
+            _showInGame = open;
+            var st = NoR.Core.GameRefs.Status;
+            if (open)
+            {
+                if (st != null && st._SOUSA) { st._SOUSA = false; st._SOUSAMNG = false; _lockedControl = true; }
+            }
+            else if (_lockedControl)
+            {
+                if (st != null) { st._SOUSA = true; st._SOUSAMNG = true; }
+                _lockedControl = false;
+            }
         }
 
         private static bool AtTitle { get { return SceneManager.GetActiveScene().name == "Gametitle"; } }
@@ -86,10 +112,10 @@ namespace NoR.Archipelago
         {
             _notes.Draw();
             Client.DeathLink.Draw();
-            if (!AtTitle || !_showWindow) return;
+            if (AtTitle ? !_showWindow : !_showInGame) return;
             float w = Mathf.Min(520f, Screen.width * 0.4f);
             if (_window.width == 0) _window = new Rect(Screen.width - w - 20, 20, w, 10);
-            _window = GUILayout.Window(0x4E6F52, _window, DrawWindow, "Archipelago (F1 to hide)");
+            _window = GUILayout.Window(0x4E6F52, _window, DrawWindow, AtTitle ? "Archipelago (F1 to hide)" : "Archipelago (F1 to close)");
         }
 
         private void DrawWindow(int id)
@@ -123,9 +149,12 @@ namespace NoR.Archipelago
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.Label(Client.Connected
-                ? "Connected. NEW GAME starts a run for this slot; LOAD continues a saved run of it."
-                : "Not connected: New Game uses the offline randomizer settings.");
+            if (AtTitle)
+                GUILayout.Label(Client.Connected
+                    ? "Connected. NEW GAME starts a run for this slot; LOAD continues a saved run of it."
+                    : "Not connected: New Game uses the offline randomizer settings.");
+            else
+                GUILayout.Label("Reconnect here if the room moved to a new port. The save accepts any address of the same seed and slot.");
             GUI.DragWindow();
         }
 
