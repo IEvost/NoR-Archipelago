@@ -34,7 +34,7 @@ Remove-Item (Join-Path $plugins "NoR.Localization/translation/missing_seen.txt")
 
 # 3. apworld + docs
 & (Join-Path $PSScriptRoot "package-apworld.ps1") -Destination $stage | Out-Null
-Copy-Item README.md, LICENSE, THIRD_PARTY_NOTICES.md $stage
+Copy-Item README.md, CHANGELOG.md, LICENSE, THIRD_PARTY_NOTICES.md $stage
 Copy-Item apworld/nightofrevenge/docs/setup_en.md (Join-Path $stage "SETUP.md")
 
 # 4. Zip

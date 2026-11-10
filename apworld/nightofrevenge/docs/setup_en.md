@@ -56,6 +56,8 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
   press **F1** in game, enter the new address and connect - the save accepts any address of the same seed and
   slot and remembers it. Details are in `BepInEx/LogOutput.log`.
 - Chat and commands (`!hint <item>`, `!release`, ...) can be typed into the Archipelago window (F1).
+  Hints cost points earned by checking locations (default: 10% of your locations per hint, about 24 for a full
+  Night of Revenge world). Hosts can lower `hint_cost` in `host.yaml` (`server_options`) before generating.
 - Chat, hints and server notices appear on screen (disable with `ShowServerMessages = false` in
   `BepInEx/config/nor.archipelago.client.cfg`).
 - Items arrive only while you are in control (not during menus, events or defeat scenes) - this is intended.

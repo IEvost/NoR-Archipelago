@@ -3,25 +3,51 @@
 Archipelago multiworld support, an item/enemy randomizer and a full English translation for
 **Night of Revenge 1.0.7** (D-lis). BepInEx 5 mod written in C#.
 
-> Status: **Milestone 0 – research tooling.** Nothing playable yet. See [PLAN.md](PLAN.md).
+> Status: **0.1.0 - first playable version.** Archipelago multiworld verified on archipelago.gg.
+> Key-door logic is experimental (option `shuffle_keys`, off by default). See [CHANGELOG.md](CHANGELOG.md).
+
+## Features
+
+- **Archipelago multiworld**: 245+ locations (floor items, chests, magic pickups, Witch's Market slots, boss drops,
+  NPC rewards, Vendetta's trades), goal = defeat the Witch in the Thorns, DeathLink (with "defeat state" mode),
+  traps, chat/hints in game, automatic reconnect. Works with archipelago.gg (built-in TLS helper).
+- **Offline randomizer** (no server needed): seeded item shuffle and spoiler log.
+- **Enemy randomizer**: every regular enemy can be any enemy of the game (bosses unchanged).
+- **Witch's Market**: a working shop at every save point.
+- **Full English translation** of items, UI and dialogue (LLM draft, under review).
+- **Widescreen / ultrawide** support (21:9, 32:9), **death skip** (skip the defeat animation after a real death),
+  backup console for stuck players.
+
+## Playing
+
+See the **[setup guide](apworld/nightofrevenge/docs/setup_en.md)**: install BepInEx 5 and the release zip, generate
+with `nightofrevenge.apworld`, host on archipelago.gg, connect from the title screen.
 
 ## Requirements
 
 - A legally owned copy of Night of Revenge **1.0.7**
 - BepInEx 5.4.x (x64, Mono)
-- For development: .NET SDK 8+ (10 recommended). Python 3.11+ later for the apworld.
+- For development: .NET SDK 8+ (10 recommended), Python 3.12.10+/3.13 and the Archipelago source for the apworld.
 
 ## Repository layout
 
 | Path | Contents |
 |---|---|
-| `src/NoR.Core` | Shared runtime helpers (net35): game object access, JSON writer, reflection serializer |
-| `src/NoR.DataDumper` | Developer-only in-game research plugin (scene dumps, flag change log) |
+| `src/NoR.Core` | Shared runtime helpers (net35): game access, fonts, JSON writer |
+| `src/NoR.Randomizer` | Offline randomizer, enemy pool, shop, rewards, traps, death skip, console |
+| `src/NoR.Archipelago` | Archipelago client (connection, items, checks, DeathLink, UI) |
+| `src/NoR.Localization` | English translation runtime |
+| `src/NoR.Widescreen` | Resolution / aspect ratio support |
+| `src/NoR.DataDumper` | Developer-only research plugin (scene dumps, flag change log) - not in releases |
 | `tools/NoR.SceneScanner` | Offline scanner for the game's asset files (AssetsTools.NET) |
-| `tools/NoR.DataBuilder` | Builds `data/*.json` tables from the scanner output |
-| `data/` | Generated item/location tables and report |
-| `docs/` | Research notes and guides |
-| `apworld/` | Archipelago world (generated, later milestone) |
+| `tools/NoR.DataBuilder` | Builds data tables from the scanner output |
+| `tools/NoR.TextExtractor` | Extracts translatable text and translation batches |
+| `tools/NoR.ApWorldGen` | Generates the apworld data module and the client id map |
+| `tools/NoR.ApBridge` | TLS bridge used by the client (game engine lacks TLS 1.2) |
+| `apworld/nightofrevenge` | Archipelago world |
+| `data/` | Hand-made tables, translations, persistent Archipelago ids |
+| `tests/` | Client/apworld mirror test |
+| `docs/` | Research notes, translation glossary, test guides |
 
 ## Building
 
