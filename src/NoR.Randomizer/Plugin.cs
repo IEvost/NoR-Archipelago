@@ -18,7 +18,7 @@ namespace NoR.Randomizer
     {
         public const string Guid = "nor.archipelago.randomizer";
         public const string Name = "NoR Randomizer";
-        public const string Version = "0.1.1";
+        public const string Version = "0.1.2";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         public static LocationTable Table;

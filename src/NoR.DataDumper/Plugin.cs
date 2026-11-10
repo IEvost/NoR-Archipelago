@@ -20,7 +20,7 @@ namespace NoR.DataDumper
     {
         public const string Guid = "nor.archipelago.datadumper";
         public const string Name = "NoR Data Dumper";
-        public const string Version = "0.1.1";
+        public const string Version = "0.1.2";
 
         internal static BepInEx.Logging.ManualLogSource Log;
 

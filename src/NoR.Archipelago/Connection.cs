@@ -96,8 +96,9 @@ namespace NoR.Archipelago
             if (s.IndexOf(':') < 0) s += ":38281";
             string host = s.Substring(0, s.LastIndexOf(':'));
 
-            bool local = host == "localhost" || host == "127.0.0.1" || host == "::1";
-            bool useBridge = mode == BridgeMode.Always || (mode == BridgeMode.Auto && !local && !explicitWs) || explicitWss;
+            // The bridge also adds WebSocket compression (permessage-deflate), which the game's websocket-sharp lacks
+            // and Archipelago servers may require in the future - so every connection goes through it unless disabled.
+            bool useBridge = mode != BridgeMode.Never || explicitWss;
             if (!useBridge) return "ws://" + s;
 
             int port = StartBridge(s, explicitWss ? "on" : (explicitWs ? "off" : "auto"));

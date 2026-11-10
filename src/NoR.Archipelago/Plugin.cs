@@ -26,7 +26,7 @@ namespace NoR.Archipelago
     {
         public const string Guid = "nor.archipelago.client";
         public const string Name = "NoR Archipelago Client";
-        public const string Version = "0.1.1";
+        public const string Version = "0.1.2";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         internal static Plugin Instance;
@@ -54,7 +54,7 @@ namespace NoR.Archipelago
             _slot = Config.Bind("Connection", "Slot", "", "Slot (player) name.");
             _password = Config.Bind("Connection", "Password", "", "Room password, if any.");
             _bridge = Config.Bind("Connection", "Bridge", Connection.BridgeMode.Auto,
-                "Auto: use the TLS bridge for remote servers, connect directly to localhost. Always / Never to override.");
+                "Auto/Always: connect through NoR.ApBridge (TLS + WebSocket compression). Never: direct plain ws:// connection (no TLS, no compression; local servers only).");
             _testServer = Config.Bind("Test", "Server", "127.0.0.1:38281", "Server used by the F7 connection test.");
             _testSlot = Config.Bind("Test", "Slot", "Tester", "Slot used by the F7 connection test.");
             _testGame = Config.Bind("Test", "Game", "ChecksFinder",

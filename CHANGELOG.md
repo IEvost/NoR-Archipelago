@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2
+- **WebSocket compression**: `NoR.ApBridge` is now a WebSocket proxy. The game's connection is terminated in the
+  bridge and a modern client with permessage-deflate (plus TLS) talks to the server, so the "client does not
+  support compressed websocket connections" warning is gone and a future server requirement cannot break
+  connections. Verified on archipelago.gg (`permessage-deflate` negotiated). The raw TCP tunnel remains as
+  `--mode tcp` fallback.
+- All connections (also to local servers) go through the bridge unless `Bridge = Never` is configured.
+- Build: the game folder is configured per machine (`Directory.Build.user.props`), no default path.
+- Repository is public.
+
 ## 0.1.1
 - F12 / ` panel now has a **Server log** tab: the full session history from the server in the server's colors
   (items sent between all players, joins/leaves, chat, hints, goals, releases, command results) plus client notices;
@@ -37,4 +47,4 @@
 ### Known limitations
 - Key-door logic is conservative and unverified in a full playthrough (use the console if stuck).
 - Karma, Sacred Walls and story events are not shuffled yet.
-- The client library's WebSocket lacks compression; the server currently only warns about it.
+- The client library's WebSocket lacks compression; the server currently only warns about it (fixed in 0.1.2).
