@@ -2,15 +2,56 @@
 
 ## Requirements
 - Night of Revenge **1.0.7** (legally owned copy)
-- BepInEx 5.4.x (x64, Mono) installed into the game folder
-- The NoR Archipelago mod release (BepInEx plugins + this apworld)
+- [BepInEx 5.4.x](https://github.com/BepInEx/BepInEx/releases) (x64, Mono) installed into the game folder
+- The NoR Archipelago mod release (`NoR-Archipelago-<version>.zip`)
+- For generating: [Archipelago](https://github.com/ArchipelagoMW/Archipelago/releases) 0.6.6 or newer
 
-## Installation
-1. Extract the mod release into the game folder so that `BepInEx/plugins/NoR.*` exist.
-2. Put `nightofrevenge.apworld` into the `custom_worlds` folder of your Archipelago installation.
-3. Start the game once to create the config files.
+## Installing the mod
+1. Install BepInEx 5 into the game folder (the folder containing `NightofRevenge.exe`) and start the game once.
+2. Extract the mod release into the game folder, so `BepInEx/plugins/NoR.Archipelago`, `NoR.Randomizer`,
+   `NoR.Localization` and `NoR.Widescreen` exist.
+3. Start the game. At the title screen a short line shows the enemy pool loading; wait until it disappears.
 
-## Connecting
-Enter the server address, slot name and password in the in-game connection screen on the title menu
-(or in `BepInEx/config/nor.archipelago.client.cfg`). archipelago.gg rooms work out of the box: the mod
-starts a small helper (`NoR.ApBridge.exe`) that provides the secure connection the old game engine lacks.
+## Generating a multiworld (done by whoever hosts)
+Night of Revenge is not part of the official Archipelago release, so the host generates locally:
+1. Put `nightofrevenge.apworld` into `custom_worlds` of the Archipelago installation (or double-click it).
+2. Every player puts their YAML into `Players`. Get a Night of Revenge template from the Archipelago Launcher
+   ("Generate Template Options") after installing the apworld. Minimal example:
+   ```yaml
+   name: Aradia
+   game: Night of Revenge
+   Night of Revenge:
+     shop_slots: 10        # 0-20 one-time Witch's Market slots
+     boss_drops: true
+     npc_rewards: true
+     trades: true
+     shuffle_keys: false   # experimental key logic
+     enemy_randomizer: true
+     trap_percentage: 10   # 0-50
+     death_link: false
+     death_link_mode: defeat_state   # or instant_respawn
+   ```
+3. Run `ArchipelagoGenerate`. The result is `output/AP_<number>.zip`.
+4. Host it: upload the zip at <https://archipelago.gg/uploads>, click **Create New Room**, share the room link.
+   The room page shows the address, e.g. `archipelago.gg:38281` (rooms that went idle restart with a new port when
+   the page is opened again - always check the room page).
+
+## Playing
+1. Start the game. The **Archipelago** window is at the top right of the title screen (F1 shows/hides it).
+2. Enter the server (`archipelago.gg:<port>`), your slot name and the password (if any), click **Connect**.
+   archipelago.gg works directly: the mod starts a small helper (`NoR.ApBridge.exe`) for the secure connection
+   the game's old engine cannot make itself.
+3. Start a **New Game** for a new run, or **Load** the save of this slot. Saves remember their server and slot and
+   reconnect automatically; a save of another seed refuses to connect.
+
+| Key | Function |
+|---|---|
+| F1 | Archipelago window (title screen) |
+| B / gamepad item-switch | Witch's Market at a save point |
+| G / hold Jump 2 s | Skip and respawn after a death or DeathLink |
+| ` or F12 | Backup console (give items/keys if you are stuck) |
+
+## Troubleshooting
+- Connection fails: check the room page for the current port; check `BepInEx/LogOutput.log`.
+- Items arrive only while you are in control (not during menus, events or defeat scenes) - this is intended.
+- Stuck because of a logic error: open the console (`) and use `give key lab|pilgrimage|rooftop` or `give <code>`.
