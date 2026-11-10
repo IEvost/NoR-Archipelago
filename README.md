@@ -52,7 +52,9 @@ with `nightofrevenge.apworld`, host on archipelago.gg, connect from the title sc
 ## Building
 
 ```powershell
-# Game path defaults to D:\Games\H-Games\NightofRevenge_1.07; override per machine:
+# Set your game folder once per machine in Directory.Build.user.props (git-ignored):
+#   <Project><PropertyGroup><GamePath>C:\path\to\NightofRevenge_1.07</GamePath></PropertyGroup></Project>
+# or pass it on the command line:
 #   dotnet build -p:GamePath="E:\Games\NightofRevenge_1.07"
 # or create Directory.Build.user.props with a <GamePath> property.
 dotnet build NoR.Archipelago.slnx

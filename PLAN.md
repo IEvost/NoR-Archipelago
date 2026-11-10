@@ -8,7 +8,7 @@ Development plan (draft v0.4, 2026-11-10). Status: **decisions D1–D13 taken (s
 
 | Fact | Value | Source |
 |---|---|---|
-| Install path | `D:\Games\H-Games\NightofRevenge_1.07` | user |
+| Install path | user's local install (configured in `Directory.Build.user.props`) | user |
 | Engine | Unity **5.6.7f1**, **Mono** scripting backend (not IL2CPP) | `BepInEx\LogOutput.log` |
 | Runtime | CLR 2.0 → mods must target **.NET Framework 3.5** | `LogOutput.log` |
 | Mod loader | BepInEx **5.4.18** already installed (HarmonyX, MonoMod) | `BepInEx\core` |

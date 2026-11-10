@@ -22,6 +22,11 @@
     <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
+  <Target Name="CheckGamePath" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(GamePath)' == '' Or !Exists('$(GameManaged)\Assembly-CSharp.dll')"
+           Text="Night of Revenge not found (GamePath='$(GamePath)'). Create Directory.Build.user.props in the repository root with &lt;Project&gt;&lt;PropertyGroup&gt;&lt;GamePath&gt;C:\path\to\NightofRevenge_1.07&lt;/GamePath&gt;&lt;/PropertyGroup&gt;&lt;/Project&gt; or build with -p:GamePath=..." />
+  </Target>
+
   <!-- Copy the built plugin into the game's BepInEx\plugins\<ProjectName> folder. Disable with -p:DeployToGame=false -->
   <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' != 'false' And Exists('$(BepInExPlugins)')">
     <MakeDir Directories="$(BepInExPlugins)\$(MSBuildProjectName)" />

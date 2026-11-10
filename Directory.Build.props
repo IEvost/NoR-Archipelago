@@ -8,7 +8,8 @@
   <Import Project="Directory.Build.user.props" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.user.props')" />
 
   <PropertyGroup>
-    <GamePath Condition="'$(GamePath)' == ''">D:\Games\H-Games\NightofRevenge_1.07</GamePath>
+    <!-- No default: set GamePath in Directory.Build.user.props or pass -p:GamePath=... -->
+    <GamePath Condition="'$(GamePath)' == ''"></GamePath>
     <GameManaged>$(GamePath)\NightofRevenge_Data\Managed</GameManaged>
     <BepInExCore>$(GamePath)\BepInEx\core</BepInExCore>
     <BepInExPlugins>$(GamePath)\BepInEx\plugins</BepInExPlugins>
