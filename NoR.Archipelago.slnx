@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NoR.Archipelago/NoR.Archipelago.csproj" />
+    <Project Path="src/NoR.Core/NoR.Core.csproj" />
+    <Project Path="src/NoR.DataDumper/NoR.DataDumper.csproj" />
+    <Project Path="src/NoR.Localization/NoR.Localization.csproj" />
+    <Project Path="src/NoR.Randomizer/NoR.Randomizer.csproj" />
+    <Project Path="src/NoR.Widescreen/NoR.Widescreen.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/NoR.ApBridge/NoR.ApBridge.csproj" />
+    <Project Path="tools/NoR.ApWorldGen/NoR.ApWorldGen.csproj" />
+    <Project Path="tools/NoR.DataBuilder/NoR.DataBuilder.csproj" />
+    <Project Path="tools/NoR.SceneScanner/NoR.SceneScanner.csproj" />
+    <Project Path="tools/NoR.TextExtractor/NoR.TextExtractor.csproj" />
+  </Folder>
+</Solution>

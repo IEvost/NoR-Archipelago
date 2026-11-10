@@ -1,0 +1,33 @@
+# Build output
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+Directory.Build.user.props
+
+# Game files and dumps must never be committed (copyright D-lis)
+lib/
+dump/
+*.assets
+*.resS
+
+# Downloaded tooling
+.tools/
+
+# Python
+__pycache__/
+*.pyc
+apworld/**/build/
+
+# Release output
+dist/
+
+# Generated from the game's files (contain Japanese game text) - regenerate with NoR.SceneScanner + NoR.DataBuilder
+data/items.json
+data/locations.draft.json
+data/regions.draft.json
+data/report.md
+data/runtime/locations.tsv
+data/runtime/enemies.tsv
+

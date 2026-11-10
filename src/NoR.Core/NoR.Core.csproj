@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Game.References.props" />
+
+  <PropertyGroup>
+    <AssemblyName>NoR.Core</AssemblyName>
+    <RootNamespace>NoR.Core</RootNamespace>
+  </PropertyGroup>
+</Project>

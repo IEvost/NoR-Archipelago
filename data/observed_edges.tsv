@@ -1,0 +1,11 @@
+# Scene transitions observed in play logs (scripted moves not visible as SceneMove components).
+# Format: from<TAB>to<TAB>source / note. Maintained by hand from BepInEx/LogOutput.log and NoR.Dump/flaglog.jsonl.
+FirstMap	BOSS_Touzoku	log 2026-11-10: prologue boss (additive)
+BOSS_Touzoku	LeaveEV	log 2026-11-10: after the bandit boss
+LeaveEV	Parishchurch	log 2026-11-10
+Parishchurch	village_main	log 2026-11-10
+village_main	village	log 2026-11-10
+village	miniGrave	log 2026-11-10
+miniGrave	BOSS_Village	log 2026-11-10: boss (additive)
+BOSS_Village	WitchVillage	log 2026-11-10
+WitchVillage	scapegoatEntrance	log 2026-11-10

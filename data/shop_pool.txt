@@ -1,0 +1,22 @@
+# Items the Witch's Market one-time slots add to the pool, in slot order (slot N uses line N).
+# Vanilla shop stock; the two lockpicks bring the world total to 15 = what all locked chests need.
+UseItem:29
+UseItem:29
+UseItem:30
+UseItem:30
+UseItem:4
+UseItem:4
+UseItem:3
+UseItem:5
+UseItem:6
+UseItem:7
+UseItem:8
+UseItem:29
+UseItem:3
+UseItem:5
+UseItem:6
+UseItem:7
+UseItem:8
+UseItem:30
+UseItem:3
+UseItem:29

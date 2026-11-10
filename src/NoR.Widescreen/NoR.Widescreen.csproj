@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Game.References.props" />
+
+  <PropertyGroup>
+    <AssemblyName>NoR.Widescreen</AssemblyName>
+    <RootNamespace>NoR.Widescreen</RootNamespace>
+  </PropertyGroup>
+</Project>

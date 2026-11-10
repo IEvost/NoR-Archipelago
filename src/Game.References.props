@@ -1,0 +1,31 @@
+<Project>
+  <!-- Imported by every in-game plugin project (net35, BepInEx 5, Unity 5.6.7 Mono). -->
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Lets the modern SDK compile against .NET Framework 3.5 without a targeting pack installed. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(GameManaged)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Assembly-CSharp-firstpass"><HintPath>$(GameManaged)\Assembly-CSharp-firstpass.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(GameManaged)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(GameManaged)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ES2"><HintPath>$(GameManaged)\ES2.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <!-- Copy the built plugin into the game's BepInEx\plugins\<ProjectName> folder. Disable with -p:DeployToGame=false -->
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' != 'false' And Exists('$(BepInExPlugins)')">
+    <MakeDir Directories="$(BepInExPlugins)\$(MSBuildProjectName)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(BepInExPlugins)\$(MSBuildProjectName)" SkipUnchangedFiles="true" ContinueOnError="true" />
+    <Copy SourceFiles="@(DeployExtra)" DestinationFolder="$(BepInExPlugins)\$(MSBuildProjectName)" SkipUnchangedFiles="true" ContinueOnError="true" />
+  </Target>
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Game.References.props" />
+
+  <PropertyGroup>
+    <AssemblyName>NoR.Localization</AssemblyName>
+    <RootNamespace>NoR.Localization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NoR.Core\NoR.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DeployExtra Include="$(OutDir)NoR.Core.dll" />
+  </ItemGroup>
+
+  <!-- Translation tables are plain files next to the plugin so translators can edit them without rebuilding. -->
+  <Target Name="DeployTranslations" AfterTargets="DeployToGame" Condition="'$(DeployToGame)' != 'false' And Exists('$(BepInExPlugins)')">
+    <ItemGroup>
+      <TranslationFiles Include="..\..\data\translation\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(TranslationFiles)" DestinationFiles="@(TranslationFiles->'$(BepInExPlugins)\$(MSBuildProjectName)\translation\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" ContinueOnError="true" />
+  </Target>
+</Project>

@@ -1,0 +1,23 @@
+<Project>
+  <!--
+    Shared build settings.
+    Override GamePath per machine without editing this file:
+      dotnet build -p:GamePath="E:\Games\NightofRevenge_1.07"
+    or create Directory.Build.user.props (git-ignored) with a <GamePath> property.
+  -->
+  <Import Project="Directory.Build.user.props" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.user.props')" />
+
+  <PropertyGroup>
+    <GamePath Condition="'$(GamePath)' == ''">D:\Games\H-Games\NightofRevenge_1.07</GamePath>
+    <GameManaged>$(GamePath)\NightofRevenge_Data\Managed</GameManaged>
+    <BepInExCore>$(GamePath)\BepInEx\core</BepInExCore>
+    <BepInExPlugins>$(GamePath)\BepInEx\plugins</BepInExPlugins>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <Authors>NoR Archipelago contributors</Authors>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

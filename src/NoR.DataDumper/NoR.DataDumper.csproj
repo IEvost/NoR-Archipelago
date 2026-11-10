@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Game.References.props" />
+
+  <PropertyGroup>
+    <AssemblyName>NoR.DataDumper</AssemblyName>
+    <RootNamespace>NoR.DataDumper</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NoR.Core\NoR.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- NoR.Core is deployed next to the plugin. -->
+    <DeployExtra Include="$(OutDir)NoR.Core.dll" />
+  </ItemGroup>
+</Project>
