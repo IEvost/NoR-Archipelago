@@ -35,16 +35,42 @@ dotnet build NoR.Archipelago.slnx
 In-game plugins are copied into `<game>\BepInEx\plugins\<Project>\` after each build
 (disable with `-p:DeployToGame=false`).
 
-## Regenerating data
+## Regenerating data (required after a fresh clone)
+
+Some tables are generated from the game's own files and contain Japanese game text, so they are not in the
+repository (`data/items.json`, `data/runtime/locations.tsv`, `data/runtime/enemies.tsv`, ...). Generate them from
+your installed game before building:
 
 ```powershell
 # 1. Offline scan of all scenes and asset files (needs .tools\classdata.tpk from UABEA)
 dotnet run --project tools\NoR.SceneScanner -c Release -- --game "<game dir>" --out dump\static
 # 2. Build data tables
 dotnet run --project tools\NoR.DataBuilder -- --dump dump\static --out data
+# 3. Archipelago world data + client id map (ids are persistent in data/ap_ids.json)
+dotnet run --project tools\NoR.ApWorldGen
+# 4. Package the apworld / a release
+pwsh tools\package-apworld.ps1
+pwsh tools\package-release.ps1 -Version 0.1.0
 ```
 
 `dump/` contains extracted game data and is git-ignored. Never commit game files.
+
+## Tests
+
+```powershell
+# Client vs apworld location sets must match for every option combination
+dotnet build tests\MirrorTest
+.tools\ap-venv\Scripts\python.exe tests\mirror_test.py
+```
+
+## In-game keys
+
+| Key | Function |
+|---|---|
+| F1 | Archipelago connection window (title screen) |
+| B / gamepad item-switch | Witch's Market at a save point |
+| ` or F12 | Backup console: `give <code>`, `give key lab\|pilgrimage\|rooftop`, `find <name>`, `karma <n>`, `idea <n>` |
+| G / hold Jump 2 s | Skip and respawn after a real death or DeathLink |
 
 ## Legal
 

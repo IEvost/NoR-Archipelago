@@ -65,6 +65,8 @@ namespace NoR.Randomizer
             DeathSkip.Enabled = Config.Bind("Gameplay", "DeathSkip", true,
                 "After a real death (HP 0) show 'Press G / hold Jump to skip and respawn' (skips the defeat animation and game-over panel).").Value;
             DeathSkip.Create();
+            if (Config.Bind("Gameplay", "Console", true, "Backup console (` or F12): give items/keys, karma, Idea. Use if logic is wrong or you are stuck.").Value)
+                DebugConsole.Create();
 
             var harmony = new Harmony(Guid);
             harmony.PatchAll(typeof(Plugin).Assembly);

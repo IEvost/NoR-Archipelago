@@ -1,0 +1,7 @@
+# Key doors (docs/research-locations.md F). The key is checked by possession, not consumed.
+# Logic is conservative: every location in the scene and every exit leaving the scene require the key
+# (door direction cannot be derived from positions; over-requiring is always safe for generation).
+# scene	key item code	door
+UndergroundLaboratory	UseItem:60	DoorKey -> _GimmickArraystage[9,4]
+PilgrimageEntrance	UseItem:61	DoorKey / DoorKey2 -> _GimmickArraystage[10,4], [10,5]
+WhiteCathedralRooftop	UseItem:62	DoorKey[6] -> _GimmickArraystage[13,6]

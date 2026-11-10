@@ -135,6 +135,7 @@ namespace NoR.Archipelago
                 ShuffleBossDrops = Long(slotData, "boss_drops", 1) != 0,
                 ShuffleNpcRewards = Long(slotData, "npc_rewards", 1) != 0,
                 ShuffleTrades = Long(slotData, "trades", 1) != 0,
+                ShuffleKeys = Long(slotData, "shuffle_keys", 0) != 0,
             };
         }
 
@@ -158,6 +159,7 @@ namespace NoR.Archipelago
                 Remote = true, ApSeedName = t.ApSeedName, ApSlot = t.ApSlot, ApServer = t.ApServer, Seed = t.Seed,
                 RandomizeEnemies = t.RandomizeEnemies, ShopSlots = t.ShopSlots,
                 ShuffleBossDrops = t.ShuffleBossDrops, ShuffleNpcRewards = t.ShuffleNpcRewards, ShuffleTrades = t.ShuffleTrades,
+                ShuffleKeys = t.ShuffleKeys,
             };
         }
 

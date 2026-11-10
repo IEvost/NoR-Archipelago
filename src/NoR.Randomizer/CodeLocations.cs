@@ -60,13 +60,17 @@ namespace NoR.Randomizer
             return cls + "." + method + ":" + actor + ":" + kind + "-" + num;
         }
 
+        /// <summary>
+        /// treasureNumSet(num, kind) forwards to DROPItemKind(ID, USE, RING, ...): kind 0 = weapon, 1 = use item,
+        /// 2 = crest ring (verified in Auto_PickUp_Dropitem / EvAuto_PickUpItem). 3 = costume skin (trades).
+        /// </summary>
         public static string ItemCode(int kind, int num)
         {
             switch (kind)
             {
                 case 0: return "weapon:" + num;
-                case 1: return "crestring:" + num;
-                case 2: return "UseItem:" + num;
+                case 1: return "UseItem:" + num;
+                case 2: return "crestring:" + num;
                 case 3: return "costume:" + num;
                 default: return null;
             }

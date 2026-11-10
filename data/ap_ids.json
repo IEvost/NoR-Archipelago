@@ -244,7 +244,26 @@
     "shop:16": 7700241,
     "shop:17": 7700242,
     "shop:18": 7700243,
-    "shop:19": 7700244
+    "shop:19": 7700244,
+    "floor_item:UndergroundLaboratory:9-4": 7700245,
+    "floor_item:PilgrimageEntrance:10-7": 7700246,
+    "reward:BossTouzoku.treasureNumSet:-1:1-15": 7700247,
+    "reward:BOSS_Village.treasureNumSet:-1:1-16": 7700248,
+    "reward:BossScapegoatentrance.treasureNumSet:-1:1-17": 7700249,
+    "reward:BossInsomniaUnder.treasureNumSet:-1:1-18": 7700250,
+    "reward:DemonRequiemKnight.treasureNumSet:-1:1-20": 7700251,
+    "reward:SuccubusSpine.treasureNumSet:-1:1-21": 7700252,
+    "reward:Praymaiden.treasureNumSet:-1:1-19": 7700253,
+    "reward:EvNpcTalkactor.treasureNumSet2:6:1-5": 7700254,
+    "reward:EvNpcTalkactor.treasureNumSet2:6:1-6": 7700255,
+    "reward:EvNpcTalkactor.treasureNumSet2:6:1-7": 7700256,
+    "reward:EvNpcTalkactor.treasureNumSet2:6:1-8": 7700257,
+    "reward:EvNpcTalkactor.treasureNumSet2:6:1-66": 7700258,
+    "reward:EvNpcTalkactor.treasureNumSet2:7:1-64": 7700259,
+    "reward:EvSuzuneTalk.treasureNumSet:0:1-29": 7700260,
+    "reward:EvSuzuneTalk.treasureNumSet:1:1-30": 7700261,
+    "reward:witchslaveslime.treasureNumSet:-1:2-30": 7700262,
+    "reward:EnemydeathCheck.treasureNumSet:-1:1-62": 7700263
   },
   "items": {
     "UseItem:9": 7700000,
@@ -337,6 +356,9 @@
     "costume:2": 7700087,
     "trap:ambush": 7700088,
     "trap:idea": 7700089,
-    "trap:knockdown": 7700090
+    "trap:knockdown": 7700090,
+    "UseItem:60": 7700091,
+    "UseItem:61": 7700092,
+    "UseItem:62": 7700093
   }
 }

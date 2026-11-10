@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Runs the plugin's own placement code (net35 assembly) on .NET Framework 4.8 and prints the Archipelago
+       location keys it would include for an option set. Compared against the apworld by tests/mirror_test.py. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="NoR.Randomizer"><HintPath>..\..\src\NoR.Randomizer\bin\Debug\NoR.Randomizer.dll</HintPath></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(GameManaged)\UnityEngine.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

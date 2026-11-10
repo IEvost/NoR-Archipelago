@@ -53,9 +53,19 @@ A local server runs on this PC with a test multiworld: slot **Aradia** (Night of
 4. Save, quit to title, load the save: it reconnects automatically and must not give items twice.
 5. Optional: the shop's rare goods show the scouted item names.
 
-### Traps (current test seed: 50% traps, DeathLink on)
-Start a **New Game** (new seed). Among the waiting items: 5 Ambush Traps (an enemy appears next to you),
-1 Idea Drain Trap (lose 20% of carried Idea); Knockdown Traps are in your own locations.
+### Current test seed: keys shuffled, 20% traps, DeathLink on
+Start a **New Game** (new seed - older saves will not connect).
+- Pilgrim's Path Key is in the starting forest (Bandits' Hidden Forest, Decayed Crest Ring spot);
+  the Blackened Key is behind the pilgrimage doors; the Rooftop Chamber Key is Vendetta's trade 1.
+- Boss drops and NPC rewards are now real locations (they were silently vanilla before - kind mapping bug fixed):
+  killing the bandit leader should show a check instead of dropping his Idea.
+
+### Backup console (` or F12)
+`help`, `give key lab|pilgrimage|rooftop`, `give UseItem:4 5`, `find lockpick`, `karma 100`, `idea 5000`, `state`.
+Player control is locked while the console is open.
+
+### Traps
+Ambush Trap (an enemy appears next to you), Idea Drain Trap (lose 20% of carried Idea), Knockdown Trap.
 
 ### DeathLink (mode defeat_state)
 Old saves of slot Aradia belong to the previous seed and will refuse to connect - start a **New Game**.

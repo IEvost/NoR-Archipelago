@@ -322,6 +322,13 @@ Update 7:
 - **Release packaging**: `tools/package-release.ps1` → `dist/NoR-Archipelago-<ver>.zip` (plugins without the data dumper, translations, bridge, apworld, docs; 6.5 MB, no game files).
 - **Traps**: Ambush (random pool enemy spawns near Aradia, parented to the level's SpawnParent), Idea Drain (−20% carried Idea, min 100), Knockdown (vanilla down, can get up). apworld option `trap_percentage` (0–50, default 10) replaces that share of filler. 15/15 random seeds generate. Lewd status-effect traps deferred to the H-content options (D8).
 
+Update 8 (user: no H-skip beyond death/DeathLink; logic next; backup give command; commit):
+- Repo: first commit on branch `dev`. Game-derived tables (Japanese text) are git-ignored and regenerated from the user's install (README). `.gitattributes` normalizes line endings.
+- **Bug fixed**: `treasureNumSet(num, kind)` forwards to `DROPItemKind(ID, USE, RING, …)` → kind 1 = use item, 2 = ring (was swapped). All boss drops and use-item NPC rewards had silently stayed vanilla (keys never matched); AP locations for them were uncheckable. Table, plugin and generator fixed; verified against every call site's literal arguments.
+- **Backup console** (` / F12, NoR.Randomizer): give items/keys, find codes by name, karma, Idea, state; locks player control while open.
+- **Logic v2**: regions = scenes (46), edges = transitions + observed scripted moves (89), key doors (`data/key_doors.tsv`) modelled conservatively (whole scene + its exits require the key). New option `shuffle_keys` (default off): Blackened Key (lab), Pilgrim's Path Key, Rooftop Chamber Key (new code location `EnemydeathCheck`) become progression items. 30/30 seeds generate; keys land outside key areas.
+- **Mirror test** (`tests/MirrorTest` + `tests/mirror_test.py`): runs the plugin's placement code and the apworld rules for 48 option sets — all match.
+
 Next:
 1. ~~Run `NoR.DataDumper` in-game once~~ (done).
 2. Research playthrough with flag log → region graph.

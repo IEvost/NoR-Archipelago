@@ -95,6 +95,7 @@ L	floor_item:UndergroundLaboratory:9-13	7700092	Underground Laboratory - Potenti
 L	floor_item:UndergroundLaboratory:9-17	7700093	Underground Laboratory - Sacred Talisman
 L	floor_item:UndergroundLaboratory:9-2	7700094	Underground Laboratory - Potentite Shard 2
 L	floor_item:UndergroundLaboratory:9-3	7700095	Underground Laboratory - Homeward Talisman
+L	floor_item:UndergroundLaboratory:9-4	7700245	Underground Laboratory - Blackened Key
 L	floor_item:UndergroundLaboratory:9-5	7700096	Underground Laboratory - Dark Talisman
 L	floor_item:UndergroundLaboratory:9-6	7700097	Underground Laboratory - Magic Crest Ring
 L	floor_item:UndergroundLaboratory:9-7	7700098	Underground Laboratory - Dark Talisman 2
@@ -120,6 +121,7 @@ L	floor_item:PilgrimageEntrance:10-3	7700117	Pilgrimage Entrance - Sacred Talism
 L	floor_item:PilgrimageEntrance:10-4	7700118	Pilgrimage Entrance - Homeward Talisman
 L	floor_item:PilgrimageEntrance:10-5	7700119	Pilgrimage Entrance - Stamina Crest Ring
 L	floor_item:PilgrimageEntrance:10-6	7700120	Pilgrimage Entrance - Saint's Crest Ring
+L	floor_item:PilgrimageEntrance:10-7	7700246	Pilgrimage Entrance - Pilgrim's Path Key
 L	floor_item:PilgrimageEntrance:10-8	7700121	Pilgrimage Entrance - Fool's Crest Ring
 L	floor_item:PilgrimageEntrance:10-9	7700122	Pilgrimage Entrance - Large Cluster of Idea 2
 L	magic:Lightning:2	7700123	Pilgrimage Entrance - Sword of Divine Thunder
@@ -197,24 +199,25 @@ L	floor_item:UnderCemetery:18-2	7700194	Under Cemetery - Witch's Elixir
 L	floor_item:UnderCemetery:18-3	7700195	Under Cemetery - Guard Crest Ring
 L	floor_item:UnderCemetery:18-4	7700196	Under Cemetery - Potentite Shard
 L	magic:darkness:4	7700197	Under Cemetery - Quick-Cast Dark Talisman
-L	reward:BossTouzoku.treasureNumSet:-1:2-15	7700198	Degraid (bandit leader) - Boss Drop
-L	reward:BOSS_Village.treasureNumSet:-1:2-16	7700199	Yatsude the Demon - Boss Drop
-L	reward:BossScapegoatentrance.treasureNumSet:-1:2-17	7700200	Church Beast - Boss Drop
+L	reward:BossTouzoku.treasureNumSet:-1:1-15	7700247	Degraid (bandit leader) - Boss Drop
+L	reward:BOSS_Village.treasureNumSet:-1:1-16	7700248	Yatsude the Demon - Boss Drop
+L	reward:BossScapegoatentrance.treasureNumSet:-1:1-17	7700249	Church Beast - Boss Drop
 L	reward:Candore.treasureNumSet:-1:0-115	7700201	High Inquisitor Candore - Boss Drop
-L	reward:BossInsomniaUnder.treasureNumSet:-1:2-18	7700202	Cocoon-Bearing Demon - Boss Drop
-L	reward:DemonRequiemKnight.treasureNumSet:-1:2-20	7700203	Fallen Requiem Knight - Boss Drop
-L	reward:SuccubusSpine.treasureNumSet:-1:2-21	7700204	Demon of Lust - Boss Drop
-L	reward:Praymaiden.treasureNumSet:-1:2-19	7700205	Prayer Maiden - Boss Drop
-L	reward:EvNpcTalkactor.treasureNumSet2:6:2-5	7700206	Insomnia Town NPC Gift 1
-L	reward:EvNpcTalkactor.treasureNumSet2:6:2-6	7700207	Insomnia Town NPC Gift 2
-L	reward:EvNpcTalkactor.treasureNumSet2:6:2-7	7700208	Insomnia Town NPC Gift 3
-L	reward:EvNpcTalkactor.treasureNumSet2:6:2-8	7700209	Insomnia Town NPC Gift 4
-L	reward:EvNpcTalkactor.treasureNumSet2:6:2-66	7700210	Insomnia Town NPC Gift 5
-L	reward:EvNpcTalkactor.treasureNumSet2:7:2-64	7700211	Forest of Requiem NPC Gift
-L	reward:EvSuzuneTalk.treasureNumSet:0:2-29	7700212	Suzune at Scapegoat Entrance
-L	reward:EvSuzuneTalk.treasureNumSet:1:2-30	7700213	Suzune at Underground Church
+L	reward:BossInsomniaUnder.treasureNumSet:-1:1-18	7700250	Cocoon-Bearing Demon - Boss Drop
+L	reward:DemonRequiemKnight.treasureNumSet:-1:1-20	7700251	Fallen Requiem Knight - Boss Drop
+L	reward:SuccubusSpine.treasureNumSet:-1:1-21	7700252	Demon of Lust - Boss Drop
+L	reward:Praymaiden.treasureNumSet:-1:1-19	7700253	Prayer Maiden - Boss Drop
+L	reward:EvNpcTalkactor.treasureNumSet2:6:1-5	7700254	Insomnia Town NPC Gift 1
+L	reward:EvNpcTalkactor.treasureNumSet2:6:1-6	7700255	Insomnia Town NPC Gift 2
+L	reward:EvNpcTalkactor.treasureNumSet2:6:1-7	7700256	Insomnia Town NPC Gift 3
+L	reward:EvNpcTalkactor.treasureNumSet2:6:1-8	7700257	Insomnia Town NPC Gift 4
+L	reward:EvNpcTalkactor.treasureNumSet2:6:1-66	7700258	Insomnia Town NPC Gift 5
+L	reward:EvNpcTalkactor.treasureNumSet2:7:1-64	7700259	Forest of Requiem NPC Gift
+L	reward:EvSuzuneTalk.treasureNumSet:0:1-29	7700260	Suzune at Scapegoat Entrance
+L	reward:EvSuzuneTalk.treasureNumSet:1:1-30	7700261	Suzune at Underground Church
 L	reward:EvMainTalkactor.treasureNumSet:29:0-67	7700214	Ranch Event Reward
-L	reward:witchslaveslime.treasureNumSet:-1:1-30	7700215	Village Witch Slave
+L	reward:witchslaveslime.treasureNumSet:-1:2-30	7700262	Village Witch Slave
+L	reward:EnemydeathCheck.treasureNumSet:-1:1-62	7700263	White Cathedral Rooftop Key Holder
 L	trade:1	7700216	Vendetta Trade 1
 L	trade:2	7700217	Vendetta Trade 2
 L	trade:3	7700218	Vendetta Trade 3
@@ -335,3 +338,6 @@ I	costume:2	7700087	Phantom Garb Skin 2
 I	trap:ambush	7700088	Ambush Trap
 I	trap:idea	7700089	Idea Drain Trap
 I	trap:knockdown	7700090	Knockdown Trap
+I	UseItem:60	7700091	Blackened Key
+I	UseItem:61	7700092	Pilgrim's Path Key
+I	UseItem:62	7700093	Rooftop Chamber Key

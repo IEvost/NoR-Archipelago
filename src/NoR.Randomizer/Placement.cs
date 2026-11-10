@@ -25,7 +25,7 @@ namespace NoR.Randomizer
             foreach (var l in table.All)
             {
                 if (string.IsNullOrEmpty(l.Vanilla)) continue;
-                if (IsProgression(l.Vanilla)) continue;
+                if (IsProgression(l.Vanilla) || l.Category == "key") continue; // offline: no logic, keys stay vanilla
                 if (l.Category == "shop" && l.B >= st.ShopSlots) continue;
                 if (l.Category == "boss_drop" && !st.ShuffleBossDrops) continue;
                 if (l.Category == "npc" && !st.ShuffleNpcRewards) continue;
@@ -73,7 +73,9 @@ namespace NoR.Randomizer
             var result = new Dictionary<string, string>();
             foreach (var l in table.All)
             {
-                if (string.IsNullOrEmpty(l.Vanilla) || IsProgression(l.Vanilla)) continue;
+                if (string.IsNullOrEmpty(l.Vanilla)) continue;
+                bool keyLocation = IsProgression(l.Vanilla) || l.Category == "key";
+                if (keyLocation && !st.ShuffleKeys) continue; // keys stay vanilla
                 if (l.Category == "shop" && l.B >= st.ShopSlots) continue;
                 if (l.Category == "boss_drop" && !st.ShuffleBossDrops) continue;
                 if (l.Category == "npc" && !st.ShuffleNpcRewards) continue;

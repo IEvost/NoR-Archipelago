@@ -31,3 +31,7 @@ data/report.md
 data/runtime/locations.tsv
 data/runtime/enemies.tsv
 
+
+# Test build output
+tests/**/bin/
+tests/**/obj/

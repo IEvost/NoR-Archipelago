@@ -12,16 +12,18 @@ namespace NoR.ApWorldGen;
 /// (data/runtime/ap_map.tsv) from the project's data tables. Archipelago ids are persistent: they live in
 /// data/ap_ids.json and new keys are only ever appended, so ids never change between versions.
 ///
+/// Logic data: one region per scene, edges from data/regions.draft.json (transitions + observed scripted moves),
+/// key doors from data/key_doors.tsv (conservative: the whole scene and its exits require the key).
+///
 /// Usage (from the repo root): dotnet run --project tools/NoR.ApWorldGen
 /// </summary>
 internal static class Program
 {
     private const long LocationBase = 7_700_000;
     private const long ItemBase = 7_700_000;
-    private const int DataVersion = 1;
-
-    /// <summary>Door keys stay at their vanilla locations in v1 (logic for gates comes later).</summary>
-    private static readonly HashSet<string> VanillaOnly = new() { "UseItem:60", "UseItem:61", "UseItem:62" };
+    private const int DataVersion = 2;
+    private const string StartRegion = "FirstMap";
+    private const string GoalRegion = "LastBoss";
 
     /// <summary>Use items that matter more than consumables: boss Ideas (trade currency), Witch's Elixir (potion cap).</summary>
     private static readonly HashSet<int> UsefulUseItems = new() { 15, 16, 17, 18, 19, 20, 21, 64 };
@@ -34,7 +36,7 @@ internal static class Program
         ["trap:knockdown"] = "Knockdown Trap",
     };
 
-    private sealed record Loc(string Key, string Category, string Name, string VanillaCode, int Slot);
+    private sealed record Loc(string Key, string Category, string Name, string VanillaCode, int Slot, string Region);
 
     private static int Main()
     {
@@ -42,9 +44,18 @@ internal static class Program
         var items = JsonNode.Parse(File.ReadAllText("data/items.json"))!;
         var magicNames = new Dictionary<string, string>();   // magic code -> Japanese display name
 
+        // ---------------- key doors
+        var keyDoors = new Dictionary<string, string>();     // scene -> key item code
+        foreach (var line in File.ReadLines("data/key_doors.tsv"))
+        {
+            if (line.Length == 0 || line[0] == '#') continue;
+            var c = line.Split('\t');
+            keyDoors[c[0]] = c[1];
+        }
+        var keyCodes = new HashSet<string>(keyDoors.Values);
+
         // ---------------- locations
         var locs = new List<Loc>();
-        var areaCounts = new Dictionary<string, int>();
         foreach (var line in File.ReadLines("data/runtime/locations.tsv"))
         {
             if (line.StartsWith('#') || line.Length == 0) continue;
@@ -52,20 +63,33 @@ internal static class Program
             string key = c[0], cat = c[1], scene = c[2], vanilla = c[5], displayJp = c[8];
             if (vanilla.Length == 0) continue;
             if (cat == "magic") magicNames[vanilla] = displayJp;
-            locs.Add(new Loc(key, cat, scene, vanilla, -1));
+            locs.Add(new Loc(key, cat, scene, vanilla, -1, scene));
         }
         foreach (var line in File.ReadLines("data/code_locations.tsv"))
         {
             if (line.StartsWith('#') || line.Length == 0) continue;
             var c = line.Split('\t');
-            string cat = c[0], cls = c[1], method = c[2], label = c[6];
+            string cat = c[0], cls = c[1], method = c[2], label = c[6], scene = c[7];
             int actor = int.Parse(c[3]), kind = int.Parse(c[4]), num = int.Parse(c[5]);
             string key = cat == "trade" ? "trade:" + method : $"reward:{cls}.{method}:{actor}:{kind}-{num}";
-            string code = kind switch { 0 => "weapon:" + num, 1 => "crestring:" + num, 2 => "UseItem:" + num, _ => "costume:" + num };
-            locs.Add(new Loc(key, cat, label, code, -1));
+            // treasureNumSet(num, kind) -> DROPItemKind(ID, USE, RING, ...): 0 weapon, 1 use item, 2 ring; 3 costume (trades)
+            string code = kind switch { 0 => "weapon:" + num, 1 => "UseItem:" + num, 2 => "crestring:" + num, _ => "costume:" + num };
+            locs.Add(new Loc(key, cat, label, code, -1, scene));
         }
         var shopPool = File.ReadLines("data/shop_pool.txt").Select(l => l.Trim()).Where(l => l.Length > 0 && l[0] != '#').ToList();
-        for (int i = 0; i < shopPool.Count; i++) locs.Add(new Loc("shop:" + i, "shop", "Witch's Market", shopPool[i], i));
+        for (int i = 0; i < shopPool.Count; i++) locs.Add(new Loc("shop:" + i, "shop", "Witch's Market", shopPool[i], i, StartRegion));
+
+        // ---------------- regions and edges
+        var regionsDoc = JsonNode.Parse(File.ReadAllText("data/regions.draft.json"))!;
+        var edges = new SortedSet<(string, string)>();
+        foreach (var e in regionsDoc["edges"]!.AsArray())
+        {
+            string from = e!["from"]!.GetValue<string>(), to = e["to"]!.GetValue<string>();
+            if (from != to) edges.Add((from, to));
+        }
+        var regions = new SortedSet<string>(StringComparer.Ordinal) { StartRegion, GoalRegion };
+        foreach (var (f, t) in edges) { regions.Add(f); regions.Add(t); }
+        foreach (var l in locs) regions.Add(l.Region);
 
         // ---------------- item names
         var itemNames = new Dictionary<string, string>(); // code -> unique English name
@@ -112,10 +136,9 @@ internal static class Program
         var itemIds = ids["items"]?.AsObject() ?? new JsonObject();
         long NextId(JsonObject o, long @base) => o.Count == 0 ? @base : o.Select(kv => (long)kv.Value!).Max() + 1;
 
-        var included = locs.Where(l => !l.VanillaCode.Split('+').Any(VanillaOnly.Contains)).ToList();
-        foreach (var l in included)
+        foreach (var l in locs)
             if (!locIds.ContainsKey(l.Key)) locIds[l.Key] = NextId(locIds, LocationBase);
-        foreach (var code in included.Select(l => l.VanillaCode.Split('+')[0]).Distinct())
+        foreach (var code in locs.Select(l => l.VanillaCode.Split('+')[0]).Distinct())
             if (!itemIds.ContainsKey(code)) itemIds[code] = NextId(itemIds, ItemBase);
         if (!itemIds.ContainsKey("UseItem:9")) itemIds["UseItem:9"] = NextId(itemIds, ItemBase); // filler
         foreach (var trap in Traps.Keys)
@@ -126,30 +149,49 @@ internal static class Program
         var jsonOpts = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
         File.WriteAllText(idsPath, ids.ToJsonString(jsonOpts) + "\n");
 
+        // Items the data module knows: every code used by a current location, the filler and the traps.
+        var usedCodes = new HashSet<string>(locs.Select(l => l.VanillaCode.Split('+')[0])) { "UseItem:9" };
+        foreach (var t in Traps.Keys) usedCodes.Add(t);
+
         // ---------------- data.py
         var py = new StringBuilder();
         py.AppendLine("# Generated by tools/NoR.ApWorldGen - do not edit by hand.");
-        py.AppendLine("from typing import Any, Dict");
+        py.AppendLine("from typing import Any, Dict, List, Tuple");
         py.AppendLine();
         py.AppendLine($"DATA_VERSION = {DataVersion}");
         py.AppendLine($"FILLER_ITEM = {Py(ItemName("UseItem:9"))}");
         py.AppendLine($"TRAPS = [{string.Join(", ", Traps.Keys.Select(k => Py(ItemName(k))))}]");
+        py.AppendLine($"START_REGION = {Py(StartRegion)}");
+        py.AppendLine($"GOAL_REGION = {Py(GoalRegion)}");
+        py.AppendLine();
+        py.AppendLine("# scene -> key item name required to use the scene's locations and exits (when keys are shuffled)");
+        py.AppendLine("KEY_DOORS: Dict[str, str] = {");
+        foreach (var kv in keyDoors) py.AppendLine($"    {Py(kv.Key)}: {Py(ItemName(kv.Value))},");
+        py.AppendLine("}");
+        py.AppendLine();
+        py.AppendLine($"REGIONS: List[str] = [{string.Join(", ", regions.Select(Py))}]");
+        py.AppendLine();
+        py.AppendLine("EDGES: List[Tuple[str, str]] = [");
+        foreach (var (f, t) in edges) py.AppendLine($"    ({Py(f)}, {Py(t)}),");
+        py.AppendLine("]");
         py.AppendLine();
         py.AppendLine("# name -> {id, code, classification}");
         py.AppendLine("ITEMS: Dict[str, Dict[str, Any]] = {");
-        foreach (var kv in itemIds.OrderBy(kv => (long)kv.Value!))
+        foreach (var kv in itemIds.Where(kv => usedCodes.Contains(kv.Key)).OrderBy(kv => (long)kv.Value!))
         {
             string code = kv.Key;
-            py.AppendLine($"    {Py(ItemName(code))}: {{\"id\": {(long)kv.Value!}, \"code\": {Py(code)}, \"classification\": {Py(Classify(code))}}},");
+            py.AppendLine($"    {Py(ItemName(code))}: {{\"id\": {(long)kv.Value!}, \"code\": {Py(code)}, \"classification\": {Py(Classify(code, keyCodes))}}},");
         }
         py.AppendLine("}");
         py.AppendLine();
-        py.AppendLine("# name -> {id, key, category, vanilla (item name), slot (shop only)}");
+        py.AppendLine("# name -> {id, key, category, region, vanilla (item names), slot (shop only), key_location (holds a door key in vanilla)}");
         py.AppendLine("LOCATIONS: Dict[str, Dict[str, Any]] = {");
-        foreach (var l in included.OrderBy(l => (long)locIds[l.Key]!))
+        foreach (var l in locs.OrderBy(l => (long)locIds[l.Key]!))
         {
-            string vanilla = ItemName(l.VanillaCode.Split('+')[0]);
-            py.AppendLine($"    {Py(locName[l.Key])}: {{\"id\": {(long)locIds[l.Key]!}, \"key\": {Py(l.Key)}, \"category\": {Py(l.Category)}, \"vanilla\": [{Py(vanilla)}], \"slot\": {l.Slot}}},");
+            string first = l.VanillaCode.Split('+')[0];
+            bool keyLoc = keyCodes.Contains(first) || l.Category == "key";
+            py.AppendLine($"    {Py(locName[l.Key])}: {{\"id\": {(long)locIds[l.Key]!}, \"key\": {Py(l.Key)}, \"category\": {Py(l.Category)}, " +
+                          $"\"region\": {Py(l.Region)}, \"vanilla\": [{Py(ItemName(first))}], \"slot\": {l.Slot}, \"key_location\": {(keyLoc ? "True" : "False")}}},");
         }
         py.AppendLine("}");
         Directory.CreateDirectory("apworld/nightofrevenge");
@@ -157,11 +199,12 @@ internal static class Program
 
         // ---------------- client map
         var map = new StringBuilder("# Generated by tools/NoR.ApWorldGen. L = location (key, id, name); I = item (code, id, name)\n");
-        foreach (var l in included) map.Append($"L\t{l.Key}\t{(long)locIds[l.Key]!}\t{locName[l.Key]}\n");
-        foreach (var kv in itemIds) map.Append($"I\t{kv.Key}\t{(long)kv.Value!}\t{ItemName(kv.Key)}\n");
+        foreach (var l in locs) map.Append($"L\t{l.Key}\t{(long)locIds[l.Key]!}\t{locName[l.Key]}\n");
+        foreach (var kv in itemIds.Where(kv => usedCodes.Contains(kv.Key))) map.Append($"I\t{kv.Key}\t{(long)kv.Value!}\t{ItemName(kv.Key)}\n");
         File.WriteAllText("data/runtime/ap_map.tsv", map.ToString(), new UTF8Encoding(false));
 
-        Console.WriteLine($"locations: {included.Count} (excluded vanilla-only: {locs.Count - included.Count}), items: {itemIds.Count}");
+        Console.WriteLine($"locations: {locs.Count} (key locations: {locs.Count(l => keyCodes.Contains(l.VanillaCode.Split('+')[0]) || l.Category == "key")}), " +
+                          $"items: {usedCodes.Count}, regions: {regions.Count}, edges: {edges.Count}");
         Console.WriteLine("wrote apworld/nightofrevenge/data.py, data/runtime/ap_map.tsv, data/ap_ids.json");
         return 0;
     }
@@ -185,8 +228,9 @@ internal static class Program
         return code;
     }
 
-    private static string Classify(string code)
+    private static string Classify(string code, HashSet<string> keyCodes)
     {
+        if (keyCodes.Contains(code)) return "progression";
         var p = code.Split(':');
         return p[0] switch
         {

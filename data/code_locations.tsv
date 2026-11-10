@@ -1,31 +1,35 @@
 # Locations granted by game code (docs/research-locations.md A, C, E). Single source for the plugin and the apworld.
-# category	class	method	actor	kind	num	label
-# kind: 0 weapon, 1 crest ring, 2 use item, 3 costume skin. actor = talkactor field (-1 if none).
-# Trades: class "trade", method = _Tradeflag index.
-boss_drop	BossTouzoku	treasureNumSet	-1	2	15	Degraid (bandit leader)
-boss_drop	BOSS_Village	treasureNumSet	-1	2	16	Yatsude the Demon
-boss_drop	BossScapegoatentrance	treasureNumSet	-1	2	17	Church Beast
-boss_drop	Candore	treasureNumSet	-1	0	115	High Inquisitor Candore
-boss_drop	BossInsomniaUnder	treasureNumSet	-1	2	18	Cocoon-Bearing Demon
-boss_drop	DemonRequiemKnight	treasureNumSet	-1	2	20	Fallen Requiem Knight
-boss_drop	SuccubusSpine	treasureNumSet	-1	2	21	Demon of Lust
-boss_drop	Praymaiden	treasureNumSet	-1	2	19	Prayer Maiden
-npc	EvNpcTalkactor	treasureNumSet2	6	2	5	Insomnia Town NPC Gift 1
-npc	EvNpcTalkactor	treasureNumSet2	6	2	6	Insomnia Town NPC Gift 2
-npc	EvNpcTalkactor	treasureNumSet2	6	2	7	Insomnia Town NPC Gift 3
-npc	EvNpcTalkactor	treasureNumSet2	6	2	8	Insomnia Town NPC Gift 4
-npc	EvNpcTalkactor	treasureNumSet2	6	2	66	Insomnia Town NPC Gift 5
-npc	EvNpcTalkactor	treasureNumSet2	7	2	64	Forest of Requiem NPC Gift
-npc	EvSuzuneTalk	treasureNumSet	0	2	29	Suzune at Scapegoat Entrance
-npc	EvSuzuneTalk	treasureNumSet	1	2	30	Suzune at Underground Church
-npc	EvMainTalkactor	treasureNumSet	29	0	67	Ranch Event Reward
-npc	witchslaveslime	treasureNumSet	-1	1	30	Village Witch Slave
-trade	trade	1	-1	3	1	Vendetta Trade 1
-trade	trade	2	-1	1	26	Vendetta Trade 2
-trade	trade	3	-1	0	181	Vendetta Trade 3
-trade	trade	4	-1	0	19	Vendetta Trade 4
-trade	trade	5	-1	0	241	Vendetta Trade 5
-trade	trade	6	-1	0	43	Vendetta Trade 6
-trade	trade	7	-1	0	187	Vendetta Trade 7
-trade	trade	8	-1	0	235	Vendetta Trade 8
-trade	trade	9	-1	3	2	Vendetta Trade 9
+# category	class	method	actor	kind	num	label	scene
+# kind = second argument of treasureNumSet(num, kind) as the game passes it, which maps to
+#   DROPItemKind(ID, USE, RING, ...): 0 = weapon, 1 = use item, 2 = crest ring.  3 = costume skin (trades only).
+# actor = talkactor field (-1 if none). Trades: class "trade", method = _Tradeflag index.
+# scene = region for the logic (scene where the reward is obtained).
+# category "key": door keys, only locations when keys are shuffled.
+boss_drop	BossTouzoku	treasureNumSet	-1	1	15	Degraid (bandit leader)	FirstMap
+boss_drop	BOSS_Village	treasureNumSet	-1	1	16	Yatsude the Demon	village
+boss_drop	BossScapegoatentrance	treasureNumSet	-1	1	17	Church Beast	scapegoatEntrance
+boss_drop	Candore	treasureNumSet	-1	0	115	High Inquisitor Candore	InundergroundChurch
+boss_drop	BossInsomniaUnder	treasureNumSet	-1	1	18	Cocoon-Bearing Demon	InsomniaTownUnder
+boss_drop	DemonRequiemKnight	treasureNumSet	-1	1	20	Fallen Requiem Knight	requiemboss
+boss_drop	SuccubusSpine	treasureNumSet	-1	1	21	Demon of Lust	UndergroundLaboratory
+boss_drop	Praymaiden	treasureNumSet	-1	1	19	Prayer Maiden	Lake
+npc	EvNpcTalkactor	treasureNumSet2	6	1	5	Insomnia Town NPC Gift 1	InsomniaTown
+npc	EvNpcTalkactor	treasureNumSet2	6	1	6	Insomnia Town NPC Gift 2	InsomniaTown
+npc	EvNpcTalkactor	treasureNumSet2	6	1	7	Insomnia Town NPC Gift 3	InsomniaTown
+npc	EvNpcTalkactor	treasureNumSet2	6	1	8	Insomnia Town NPC Gift 4	InsomniaTown
+npc	EvNpcTalkactor	treasureNumSet2	6	1	66	Insomnia Town NPC Gift 5	InsomniaTown
+npc	EvNpcTalkactor	treasureNumSet2	7	1	64	Forest of Requiem NPC Gift	ForestOfRequiem
+npc	EvSuzuneTalk	treasureNumSet	0	1	29	Suzune at Scapegoat Entrance	scapegoatEntrance
+npc	EvSuzuneTalk	treasureNumSet	1	1	30	Suzune at Underground Church	UndergroundChurch
+npc	EvMainTalkactor	treasureNumSet	29	0	67	Ranch Event Reward	Ranch
+npc	witchslaveslime	treasureNumSet	-1	2	30	Village Witch Slave	village_main
+key	EnemydeathCheck	treasureNumSet	-1	1	62	White Cathedral Rooftop Key Holder	WhiteCathedralRooftop
+trade	trade	1	-1	3	1	Vendetta Trade 1	Shop
+trade	trade	2	-1	2	26	Vendetta Trade 2	Shop
+trade	trade	3	-1	0	181	Vendetta Trade 3	Shop
+trade	trade	4	-1	0	19	Vendetta Trade 4	Shop
+trade	trade	5	-1	0	241	Vendetta Trade 5	Shop
+trade	trade	6	-1	0	43	Vendetta Trade 6	Shop
+trade	trade	7	-1	0	187	Vendetta Trade 7	Shop
+trade	trade	8	-1	0	235	Vendetta Trade 8	Shop
+trade	trade	9	-1	3	2	Vendetta Trade 9	Shop

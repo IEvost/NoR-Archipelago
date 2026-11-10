@@ -27,7 +27,7 @@ namespace NoR.Randomizer
         public bool ShuffleMagic = true;
         public bool RandomizeEnemies = true;
         public int ShopSlots = 0;
-        public bool ShuffleBossDrops, ShuffleNpcRewards, ShuffleTrades;
+        public bool ShuffleBossDrops, ShuffleNpcRewards, ShuffleTrades, ShuffleKeys;
 
         // ---- Archipelago
         public bool Remote;
@@ -45,6 +45,7 @@ namespace NoR.Randomizer
             sb.AppendFormat(CultureInfo.InvariantCulture, "v={0};seed={1};floor={2};chest={3};magic={4};enemy={5};shop={6};boss={7};npc={8};trade={9}",
                 FormatVersion, Seed, B(ShuffleFloorItems), B(ShuffleChests), B(ShuffleMagic), B(RandomizeEnemies), ShopSlots,
                 B(ShuffleBossDrops), B(ShuffleNpcRewards), B(ShuffleTrades));
+            if (ShuffleKeys) sb.Append(";keys=1");
             if (Remote)
             {
                 sb.Append(";ap=1;apseed=").Append(Enc(ApSeedName)).Append(";apslot=").Append(Enc(ApSlot)).Append(";apserver=").Append(Enc(ApServer));
@@ -79,6 +80,7 @@ namespace NoR.Randomizer
             st.ShuffleBossDrops = Flag(kv, "boss");
             st.ShuffleNpcRewards = Flag(kv, "npc");
             st.ShuffleTrades = Flag(kv, "trade");
+            st.ShuffleKeys = Flag(kv, "keys");
 
             st.Remote = Flag(kv, "ap");
             if (st.Remote)

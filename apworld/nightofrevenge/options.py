@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, DeathLink, DefaultOnToggle, PerGameCommonOptions, Range
+from Options import Choice, DeathLink, DefaultOnToggle, PerGameCommonOptions, Range, Toggle
 
 
 class ShopSlots(Range):
@@ -24,6 +24,13 @@ class NpcRewards(DefaultOnToggle):
 class Trades(DefaultOnToggle):
     """Vendetta's trades are locations. Their costs (boss Idea items + Idea) stay vanilla."""
     display_name = "Trades"
+
+
+class ShuffleKeys(Toggle):
+    """Shuffle the three door keys (Blackened Key, Pilgrim's Path Key, Rooftop Chamber Key) into the multiworld.
+    Logic for key doors is conservative (the whole key-door area requires its key). Experimental: if you get stuck,
+    the in-game console (` key) can give items."""
+    display_name = "Shuffle Keys"
 
 
 class EnemyRandomizer(DefaultOnToggle):
@@ -57,6 +64,7 @@ class NightOfRevengeOptions(PerGameCommonOptions):
     boss_drops: BossDrops
     npc_rewards: NpcRewards
     trades: Trades
+    shuffle_keys: ShuffleKeys
     enemy_randomizer: EnemyRandomizer
     trap_percentage: TrapPercentage
     death_link: DeathLink
