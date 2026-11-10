@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,9 +20,14 @@ namespace NoR.Archipelago
         private GUIStyle _style;
         public float Duration = 6f;
 
-        public void Add(string text, Kind kind)
+        /// <summary>Raised for client-side notices (Info / Error) that belong in the F12 server log.</summary>
+        public Action<string, bool> ClientNote;
+
+        public void Add(string text, Kind kind, bool toServerLog = true)
         {
             Plugin.Log.LogInfo("[note] " + text);
+            // Sent/Received are already reported by the server's own ItemSend messages.
+            if (toServerLog && ClientNote != null && (kind == Kind.Info || kind == Kind.Error)) ClientNote(text, kind == Kind.Error);
             _entries.Add(new Entry { Text = text, Kind = kind, Until = Time.unscaledTime + Duration });
             if (_entries.Count > 8) _entries.RemoveAt(0);
         }

@@ -49,7 +49,7 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
 | F1 | Archipelago window (title screen; in game it opens the window to reconnect) |
 | B / gamepad item-switch | Witch's Market at a save point |
 | G / hold Jump 2 s | Skip and respawn after a death or DeathLink |
-| ` or F12 | Backup console (give items/keys if you are stuck) |
+| ` or F12 | **Server log** (full history: who sent what, joins/leaves, chat, hints; type chat/commands there) and **Console** tab (give items/keys if you are stuck) |
 
 ## Troubleshooting
 - Connection fails: check the room page for the current port. If the room moved to a new port while you play,

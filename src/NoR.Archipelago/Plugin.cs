@@ -26,7 +26,7 @@ namespace NoR.Archipelago
     {
         public const string Guid = "nor.archipelago.client";
         public const string Name = "NoR Archipelago Client";
-        public const string Version = "0.1.0";
+        public const string Version = "0.1.1";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         internal static Plugin Instance;
@@ -68,7 +68,7 @@ namespace NoR.Archipelago
             _uiPassword = _password.Value;
 
             _conn = new Connection(Path.GetDirectoryName(Info.Location));
-            Client = new ApClient(_conn, ApMap.LoadEmbedded(), _notes);
+            Client = new ApClient(_conn, ApMap.LoadEmbedded(), _notes, Path.GetDirectoryName(Info.Location));
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             if (_diagnostics.Value) RunDiagnostics();
         }

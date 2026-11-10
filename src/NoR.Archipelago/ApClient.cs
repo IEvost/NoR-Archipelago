@@ -33,11 +33,21 @@ namespace NoR.Archipelago
         public readonly DeathLinkHandler DeathLink;
         public string SlotName { get { return _slot; } }
 
-        public ApClient(Connection conn, ApMap map, Notifications notes)
+        private readonly ServerLogFeed _log;
+
+        public ApClient(Connection conn, ApMap map, Notifications notes, string pluginDir)
         {
             _conn = conn;
             _map = map;
             _notes = notes;
+            _log = new ServerLogFeed(pluginDir);
+            notes.ClientNote = (text, error) => _log.OnClientNote(text, error);
+            DebugConsole.ChatSender = text =>
+            {
+                if (!Connected) return false;
+                Say(text);
+                return true;
+            };
             DeathLink = new DeathLinkHandler(notes);
             Checks.RemoteHandler = OnLocationChecked;
             Checks.RemoteDescribe = DescribeLocation;
@@ -80,7 +90,12 @@ namespace NoR.Archipelago
             }
 
             var session = _conn.Session;
-            session.MessageLog.OnMessageReceived += msg => _conn.Post(() => OnServerMessage(msg));
+            _log.UseSeed(session.RoomState.Seed);
+            session.MessageLog.OnMessageReceived += msg => _conn.Post(() =>
+            {
+                _log.OnMessage(msg);
+                OnServerMessage(msg);
+            });
             session.Socket.SocketClosed += reason => _conn.Post(() =>
             {
                 _notes.Add("Archipelago: disconnected (" + reason + ")", Notifications.Kind.Error);
@@ -294,7 +309,7 @@ namespace NoR.Archipelago
             string text = msg.ToString();
             if (string.IsNullOrEmpty(text)) return;
             var kind = msg is global::Archipelago.MultiClient.Net.MessageLog.Messages.HintItemSendLogMessage ? Notifications.Kind.Sent : Notifications.Kind.Info;
-            _notes.Add(text, kind);
+            _notes.Add(text, kind, toServerLog: false); // already in the server log via ServerLogFeed
         }
 
         // ------------------------------------------------------------------ scouting (names for messages and the shop)

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+- F12 / ` panel now has a **Server log** tab: the full session history from the server in the server's colors
+  (items sent between all players, joins/leaves, chat, hints, goals, releases, command results) plus client notices;
+  filter "only about me", follow mode, and an input line for chat and server commands.
+- The history is also written to `BepInEx/NoR.Archipelago/server_log_<seed>.txt`.
+- No apworld changes (seeds generated with 0.1.0 stay compatible).
+
 ## 0.1.0 - first playable version
 
 ### Archipelago
