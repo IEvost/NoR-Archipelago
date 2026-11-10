@@ -44,7 +44,7 @@ namespace NoR.Archipelago
         private readonly Notifications _notes = new Notifications();
         private bool _showWindow = true;
         private Rect _window = new Rect(0, 0, 0, 0);
-        private string _uiServer, _uiSlot, _uiPassword;
+        private string _uiServer, _uiSlot, _uiPassword, _uiChat;
 
         private void Awake()
         {
@@ -149,6 +149,19 @@ namespace NoR.Archipelago
             }
             GUILayout.EndHorizontal();
 
+            if (Client.Connected)
+            {
+                GUILayout.Label("Chat / command (e.g. !hint Pilgrim's Path Key)");
+                GUILayout.BeginHorizontal();
+                _uiChat = GUILayout.TextField(_uiChat ?? string.Empty);
+                bool enter = Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
+                if ((GUILayout.Button("Send", GUILayout.Width(70)) || enter) && _uiChat.Trim().Length > 0)
+                {
+                    Client.Say(_uiChat.Trim());
+                    _uiChat = string.Empty;
+                }
+                GUILayout.EndHorizontal();
+            }
             if (AtTitle)
                 GUILayout.Label(Client.Connected
                     ? "Connected. NEW GAME starts a run for this slot; LOAD continues a saved run of it."

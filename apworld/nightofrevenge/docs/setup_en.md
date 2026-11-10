@@ -55,6 +55,7 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
 - Connection fails: check the room page for the current port. If the room moved to a new port while you play,
   press **F1** in game, enter the new address and connect - the save accepts any address of the same seed and
   slot and remembers it. Details are in `BepInEx/LogOutput.log`.
+- Chat and commands (`!hint <item>`, `!release`, ...) can be typed into the Archipelago window (F1).
 - Chat, hints and server notices appear on screen (disable with `ShowServerMessages = false` in
   `BepInEx/config/nor.archipelago.client.cfg`).
 - Items arrive only while you are in control (not during menus, events or defeat scenes) - this is intended.

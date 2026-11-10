@@ -216,6 +216,14 @@ namespace NoR.Archipelago
             Plugin.Log.LogInfo("Resync: " + ids.Count + " checks, received index " + st.ApItemIndex + "/" + _conn.Session.Items.AllItemsReceived.Count);
         }
 
+        /// <summary>Sends a chat message or server command (e.g. "!hint item") to the room.</summary>
+        public void Say(string text)
+        {
+            if (!Connected) return;
+            try { _conn.Session.Say(text); }
+            catch (Exception e) { _notes.Add("Could not send: " + e.Message, Notifications.Kind.Error); }
+        }
+
         public void ReportGoal()
         {
             var st = NoR.Randomizer.Plugin.State;
