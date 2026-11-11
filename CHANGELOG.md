@@ -19,8 +19,9 @@
 - UI: translated one-line labels (teleport menu area names and similar) stay on one line and shrink to fit instead of
   wrapping over the next entry; labels in menus that were hidden at load are fitted when the menu opens.
 - Altar teleport menu: area name labels are 40% wider and stay on one line.
-- Camera: in areas narrower than an ultrawide view the zoom baseline is capped to the level bounds, and the speed-based
-  zoom pauses while the bounds hold the view - fixes the camera jittering every frame while standing still.
+- Camera: fixed the camera jittering every frame (ghosting) in rooms narrower than the view - ultrawide screens or a
+  zoomed-out camera. The collider boundaries pushed it +-0.1 between both walls; it is now centred between them. For
+  numeric boundaries the zoom baseline is capped to the bounded size and the speed-based zoom pauses at the bounds.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld

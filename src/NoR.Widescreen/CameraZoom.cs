@@ -207,3 +207,52 @@ namespace NoR.Widescreen
         }
     }
 }
+
+namespace NoR.Widescreen
+{
+    /// <summary>
+    /// Geometry Boundaries (3D collider walls) cast rays from the camera centre to its corners; a corner inside a wall
+    /// nudges the camera 0.1 away. When the view is wider (or taller) than the space between two walls - narrow rooms on
+    /// an ultrawide screen, or zoomed out - both sides hit and the camera flips +-0.1 every frame (seen as ghosting;
+    /// Speed Based Zoom then reads ~22 u/s and zooms out further). In that case centre the camera between the walls on
+    /// that axis instead.
+    /// </summary>
+    [HarmonyPatch(typeof(ProCamera2DGeometryBoundaries), "AdjustDelta")]
+    internal static class GeometryBoundsSqueezePatch
+    {
+        private const float Probe = 500f;
+
+        private static void Postfix(ProCamera2DGeometryBoundaries __instance, float deltaTime, ref Vector3 __result)
+        {
+            if (!__instance.enabled) return;
+            var pc = ProCamera2D.Instance;
+            if (pc == null) return;
+            Vector3 c = pc.transform.localPosition;
+            Vector2 size = pc.ScreenSizeInWorldCoordinates;
+            int mask = __instance.BoundariesLayerMask;
+            var origin = new Vector3(c.x, c.y, 0f);
+            float k = Mathf.Clamp01(deltaTime * 10f);
+
+            float left, right;
+            if (Gap(origin, Vector3.left, Vector3.right, mask, out left, out right) && right - left < size.x + 0.4f)
+                __result.x = ((left + right) * 0.5f - c.x) * k;
+
+            float bottom, top;
+            if (Gap(origin, Vector3.down, Vector3.up, mask, out bottom, out top) && top - bottom < size.y + 0.4f)
+                __result.y = ((bottom + top) * 0.5f - c.y) * k;
+        }
+
+        /// <summary>Wall positions along an axis on both sides of origin (x for left/right, y for down/up).</summary>
+        private static bool Gap(Vector3 origin, Vector3 neg, Vector3 pos, int mask, out float a, out float b)
+        {
+            a = b = 0f;
+            RaycastHit h1, h2;
+            if (!Physics.Raycast(origin, neg, out h1, Probe, mask)) return false;
+            if (!Physics.Raycast(origin, pos, out h2, Probe, mask)) return false;
+            bool horizontal = neg.x != 0f;
+            a = horizontal ? h1.point.x : h1.point.y;
+            b = horizontal ? h2.point.x : h2.point.y;
+            return true;
+        }
+    }
+}
