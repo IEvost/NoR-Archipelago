@@ -255,16 +255,42 @@ namespace NoR.Widescreen
                 if (Physics.Raycast(o, Vector3.right, out h, reach, mask)) right = Mathf.Min(right, h.point.x);
             }
             bool hasL = !float.IsNegativeInfinity(left), hasR = !float.IsPositiveInfinity(right);
-            if (!hasL && !hasR) return;
 
-            float x = nextX;
-            if (hasL && hasR && right - left < size.x) x = (left + right) * 0.5f;
-            else
+            if (hasL || hasR)
             {
-                if (hasL) x = Mathf.Max(x, left + hw);
-                if (hasR) x = Mathf.Min(x, right - hw);
+                float x = nextX;
+                if (hasL && hasR && right - left < size.x) x = (left + right) * 0.5f;
+                else
+                {
+                    if (hasL) x = Mathf.Max(x, left + hw);
+                    if (hasR) x = Mathf.Min(x, right - hw);
+                }
+                delta.x = x - c.x;
             }
-            delta.x = x - c.x;
+
+            // Same for floor and ceiling, rays at three horizontal positions.
+            float nextY = c.y + delta.y;
+            float reachY = hh + Mathf.Abs(delta.y) + 1f;
+            float bottom = float.NegativeInfinity, top = float.PositiveInfinity;
+            for (int i = -1; i <= 1; i++)
+            {
+                var o = new Vector3(c.x + i * hw * 0.5f, c.y, 0f);
+                RaycastHit h;
+                if (Physics.Raycast(o, Vector3.down, out h, reachY, mask)) bottom = Mathf.Max(bottom, h.point.y);
+                if (Physics.Raycast(o, Vector3.up, out h, reachY, mask)) top = Mathf.Min(top, h.point.y);
+            }
+            bool hasB = !float.IsNegativeInfinity(bottom), hasT = !float.IsPositiveInfinity(top);
+            if (hasB || hasT)
+            {
+                float y = nextY;
+                if (hasB && hasT && top - bottom < size.y) y = (bottom + top) * 0.5f;
+                else
+                {
+                    if (hasB) y = Mathf.Max(y, bottom + hh);
+                    if (hasT) y = Mathf.Min(y, top - hh);
+                }
+                delta.y = y - c.y;
+            }
         }
     }
 }
