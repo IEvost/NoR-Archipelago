@@ -18,6 +18,9 @@
   to cover wider screens - no more blank strips at the left/right edges.
 - UI: translated one-line labels (teleport menu area names and similar) stay on one line and shrink to fit instead of
   wrapping over the next entry; labels in menus that were hidden at load are fitted when the menu opens.
+- Altar teleport menu: area name labels are 40% wider and stay on one line.
+- Camera: in areas narrower than an ultrawide view the zoom baseline is capped to the level bounds, and the speed-based
+  zoom pauses while the bounds hold the view - fixes the camera jittering every frame while standing still.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld

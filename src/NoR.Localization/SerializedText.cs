@@ -86,14 +86,29 @@ namespace NoR.Localization
         /// </summary>
         internal static void FitToBox(TMPro.TMP_Text tmp)
         {
-            if (tmp == null || tmp.enableAutoSizing || Fitted.Contains(tmp.GetInstanceID())) return;
+            if (tmp == null || Fitted.Contains(tmp.GetInstanceID())) return;
+            if (tmp.enableAutoSizing && !IsUnder(tmp.transform, "Altarname", 6)) return;
             var rt = tmp.rectTransform;
             if (rt == null) return;
             float h = rt.rect.height;
             if (h <= 0f) return; // not laid out yet (inactive menu) - try again on the next set/enable
             Fitted.Add(tmp.GetInstanceID());
-            if (h > 80f) return; // dialogue boxes are taller - leave them
             float size = tmp.fontSize;
+            if (IsUnder(tmp.transform, "Altarname", 6))
+            {
+                // Altar teleport menu: the area names are long in English. The column has room on both sides, so widen
+                // the label by 40% and keep it on one line.
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width * 1.4f);
+                tmp.enableWordWrapping = false;
+                if (!tmp.enableAutoSizing)
+                {
+                    tmp.fontSizeMax = size;
+                    tmp.fontSizeMin = Mathf.Max(10f, size * 0.5f);
+                    tmp.enableAutoSizing = true;
+                }
+                return;
+            }
+            if (h > 80f) return; // dialogue boxes are taller - leave them
             // A box shorter than two lines is a one-line label: wrapping would push the second line over the next
             // entry (teleport menu area names). Keep it on one line and let auto-size shrink it to the width.
             if (h < size * 1.8f) tmp.enableWordWrapping = false;
@@ -101,6 +116,13 @@ namespace NoR.Localization
             tmp.fontSizeMin = Mathf.Max(10f, size * 0.5f);
             tmp.enableAutoSizing = true;
             if (Fitted.Count > 50000) Fitted.Clear();
+        }
+
+        private static bool IsUnder(Transform t, string name, int levels)
+        {
+            for (int i = 0; t != null && i < levels; i++, t = t.parent)
+                if (t.name == name) return true;
+            return false;
         }
 
         private const int MaxDepth = 6;
