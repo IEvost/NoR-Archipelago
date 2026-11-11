@@ -50,6 +50,7 @@ namespace NoR.Localization
             harmony.PatchAll(typeof(Plugin).Assembly);
             int patched = CodeLiteralPatcher.PatchAll(harmony, Path.Combine(_dir, "code_methods.txt"));
             Log.LogInfo("Code literal methods patched: " + patched);
+            Log.LogInfo("Typewriter controllers patched: " + TypewriterText.PatchAll(harmony));
 
             SceneManager.sceneLoaded += (s, m) =>
             {

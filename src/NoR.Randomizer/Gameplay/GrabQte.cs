@@ -197,4 +197,14 @@ namespace NoR.Randomizer.Gameplay
             ___key_atk = false;
         }
     }
+
+    /// <summary>The potion-switch button (Rewired "Itemcursor") stays live while grabbed; QTE letters can share its key.</summary>
+    [HarmonyPatch(typeof(playercon), "fun_changeItem")]
+    internal static class ChangeItemPatch
+    {
+        private static bool Prefix(playercon __instance)
+        {
+            return !GrabQte.BlockVanillaPresses(__instance);
+        }
+    }
 }

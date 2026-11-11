@@ -45,7 +45,8 @@ namespace NoR.Localization
                 if (so == null) continue;
                 var t = so.GetType();
                 if (t.Assembly != GameAsm || t.Namespace != null) continue;
-                if (!Done.Add(so.GetInstanceID())) continue;
+                // No Done check: an unloaded asset is reloaded from disk (Japanese again) under the same instance id.
+                // Re-walking is cheap, already translated strings fail the Japanese check immediately.
                 changed += TranslateFields(so, 0);
             }
             foreach (var tm in Resources.FindObjectsOfTypeAll<TextMesh>())

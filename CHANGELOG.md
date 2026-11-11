@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- Typewriter text (opening narration, event dialogue, game-over texts) now rolls out in English instead of Japanese
+  that switched to English only when the line was complete.
+- The potion-switch button no longer works while grabbed (QTE) or during the knockdown lockout.
+
 ## 0.2.0 - feedback from the first real multiworld
 - **English dialogue**: event/NPC dialogue stored in data assets (MainEV, SubEventDialogue, NpcTalk, ...) is now
   translated (about 2,600 lines that still appeared in Japanese, letter by letter).
