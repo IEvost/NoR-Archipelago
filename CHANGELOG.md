@@ -8,6 +8,8 @@
   partial manual reset; a fallback forces the release if it does not run. The log names the grabbing enemy.
 - **Grab drain**: during a grab QTE the enemy drains 3% max HP per second (`GrabDrainPerSecond`); every drain and
   every wrong QTE input heals the grabbing enemy by the HP taken + 25 (`GrabEnemyHealBonus`), up to its max HP.
+- Camera: after changing the zoom level the camera no longer pumps in and out while standing still (the game's
+  speed-based zoom kept the vanilla baseline and fought the stuck-zoom watchdog).
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld

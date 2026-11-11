@@ -99,6 +99,10 @@ namespace NoR.Widescreen
             t.Field("_startScreenSizeInWorldCoordinates").SetValue(new Vector2(desired * 2f * aspect, desired * 2f));
             var fit = cam.GetComponent<ProCamera2DZoomToFitTargets>() ?? FindObjectOfType<ProCamera2DZoomToFitTargets>();
             if (fit != null) Traverse.Create(fit).Field("_initialCamSize").SetValue(desired);
+            // Speed Based Zoom keeps its own baseline from Awake; left at the vanilla size it pulls the camera back while
+            // standing still and the watchdog pushes it out again (camera pumping every ~0.5 s).
+            var speed = SpeedZoom(cam);
+            if (speed != null) Traverse.Create(speed).Field("_initialCamSize").SetValue(desired);
             if (!PlayerBusy()) cam.UpdateScreenSize(desired, duration);
         }
 
@@ -110,11 +114,19 @@ namespace NoR.Widescreen
             if (fit != null && fit.enabled) return; // a zoom is in progress
             float current = cam.ScreenSizeInWorldCoordinates.y * 0.5f;
             float desired = Desired();
-            if (current < desired - 0.05f)
+            // Speed Based Zoom legitimately zooms in down to baseline / MaxZoomInAmount while standing still.
+            var speed = SpeedZoom(cam);
+            float floor = speed != null && speed.enabled ? desired / Mathf.Max(1f, speed.MaxZoomInAmount) : desired;
+            if (current < floor - 0.05f)
             {
                 Plugin.Log.LogInfo("Camera stuck zoomed in (" + current.ToString("0.00") + " < " + desired.ToString("0.00") + ") - resetting");
                 cam.UpdateScreenSize(desired, 0.5f);
             }
+        }
+
+        private static ProCamera2DSpeedBasedZoom SpeedZoom(ProCamera2D cam)
+        {
+            return cam.GetComponent<ProCamera2DSpeedBasedZoom>() ?? FindObjectOfType<ProCamera2DSpeedBasedZoom>();
         }
 
         /// <summary>Grabs and deaths zoom in on purpose.</summary>
