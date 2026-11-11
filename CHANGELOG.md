@@ -23,6 +23,8 @@
   zoomed-out camera. While the player is idle the collider boundaries (e.g. the fog at area exits) nudged it 0.1 off
   the wall and the camera follow pulled it back every frame; the idle nudge is dropped (walls still block movement). For
   numeric boundaries the zoom baseline is capped to the bounded size and the speed-based zoom pauses at the bounds.
+- Camera: the view stops at boundary walls (exit fog) instead of showing the empty area behind them on wide screens;
+  rooms narrower than the view are centred.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld

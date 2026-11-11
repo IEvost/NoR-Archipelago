@@ -220,10 +220,51 @@ namespace NoR.Widescreen
     [HarmonyPatch(typeof(ProCamera2DGeometryBoundaries), "AdjustDelta")]
     internal static class GeometryBoundsIdleNudgePatch
     {
-        private static void Postfix(Vector3 originalDelta, ref Vector3 __result)
+        private static void Postfix(ProCamera2DGeometryBoundaries __instance, Vector3 originalDelta, ref Vector3 __result)
         {
+            if (!__instance.enabled) return;
             if (originalDelta.x == 0f) __result.x = 0f;
             if (originalDelta.y == 0f) __result.y = 0f;
+            ClampToWalls(__instance, ref __result);
+        }
+
+        /// <summary>
+        /// Keep the view's left/right edges inside the boundary walls (the vanilla corner rays only nudge, which a view
+        /// wider than 16:9 slips past - showing the empty area behind an exit fog). Rays at three heights from the
+        /// camera centre find the nearest wall on each side; the camera centre is clamped so the view ends at the wall,
+        /// or centred between both walls when the room is narrower than the view. A clamp to a fixed value cannot
+        /// oscillate.
+        /// </summary>
+        private static void ClampToWalls(ProCamera2DGeometryBoundaries gb, ref Vector3 delta)
+        {
+            var pc = ProCamera2D.Instance;
+            if (pc == null) return;
+            Vector3 c = pc.transform.localPosition;
+            Vector2 size = pc.ScreenSizeInWorldCoordinates;
+            float hw = size.x * 0.5f, hh = size.y * 0.5f;
+            int mask = gb.BoundariesLayerMask;
+            float nextX = c.x + delta.x;
+            float reach = hw + Mathf.Abs(delta.x) + 1f;
+
+            float left = float.NegativeInfinity, right = float.PositiveInfinity;
+            for (int i = -1; i <= 1; i++)
+            {
+                var o = new Vector3(c.x, c.y + i * hh * 0.5f, 0f);
+                RaycastHit h;
+                if (Physics.Raycast(o, Vector3.left, out h, reach, mask)) left = Mathf.Max(left, h.point.x);
+                if (Physics.Raycast(o, Vector3.right, out h, reach, mask)) right = Mathf.Min(right, h.point.x);
+            }
+            bool hasL = !float.IsNegativeInfinity(left), hasR = !float.IsPositiveInfinity(right);
+            if (!hasL && !hasR) return;
+
+            float x = nextX;
+            if (hasL && hasR && right - left < size.x) x = (left + right) * 0.5f;
+            else
+            {
+                if (hasL) x = Mathf.Max(x, left + hw);
+                if (hasR) x = Mathf.Min(x, right - hw);
+            }
+            delta.x = x - c.x;
         }
     }
 }
