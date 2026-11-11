@@ -44,6 +44,8 @@ namespace NoR.Randomizer.Gameplay
         private float _flashWrongUntil;
         private float _prevH, _prevV;
         private bool _injectEscape;
+        private bool _prevEroflag;
+        private int _sortFixPending;
         private float _escapeAt = -100f;
         private float _nextDrain;
         private GUIStyle _style, _boxStyle;
@@ -80,6 +82,10 @@ namespace NoR.Randomizer.Gameplay
             _prevErodown = pc.erodown;
 
             bool grabbed = pc.eroflag && pc.erodown != 0;
+            if (pc.eroflag && !_prevEroflag) _sortFixPending = 10; // grab started (any cause, also DeathLink)
+            _prevEroflag = pc.eroflag;
+            if (_sortFixPending > 0 && --_sortFixPending % 5 == 0) GrabSorting.Fix(pc, Grabber());
+
             if (!grabbed || EscapeBlocked || !QteEnabled)
             {
                 _active = false;
@@ -325,6 +331,59 @@ namespace NoR.Randomizer.Gameplay
             if (f == null) return;
             var st = f.GetValue(__instance);
             if (st != null && st.ToString() == "EROWALK") multiply *= GrabQte.RushMultiplier;
+        }
+    }
+
+    /// <summary>
+    /// Grab animations are sorted for the enemy's home area. A randomized enemy in another area can end up in a sorting
+    /// layer below that area's scenery (the village stone wall covered the bandit's grab). When a grab starts, a grab
+    /// object drawn in a lower layer than the player is moved to the player's layer just above her, keeping its
+    /// internal order. Censor quads are left alone (MosaicOrderFix handles them).
+    /// </summary>
+    internal static class GrabSorting
+    {
+        public static void Fix(playercon pc, EnemyDate grabber)
+        {
+            if (pc == null || grabber == null) return;
+            var spine = Traverse.Create(pc).Field("spineanime").GetValue<Component>();
+            var playerR = spine != null ? spine.GetComponent<MeshRenderer>() : pc.GetComponentInChildren<MeshRenderer>();
+            if (playerR == null) return;
+            int pLayer = playerR.sortingLayerID, pOrder = playerR.sortingOrder;
+            int pValue = SortingLayer.GetLayerValueFromID(pLayer);
+
+            var roots = new List<GameObject>();
+            if (grabber.erodata != null) roots.Add(grabber.erodata);
+            var data2 = Traverse.Create(grabber).Field("erodata2").GetValue<GameObject>();
+            if (data2 != null) roots.Add(data2);
+
+            foreach (var root in roots)
+            {
+                var rs = new List<Renderer>();
+                foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+                {
+                    var m = r.sharedMaterial;
+                    if (m != null && m.shader != null && m.shader.name == "Ist/MosaicField") continue;
+                    rs.Add(r);
+                }
+                if (rs.Count == 0) continue;
+                bool below = false;
+                int minOrder = int.MaxValue;
+                foreach (var r in rs)
+                {
+                    int v = SortingLayer.GetLayerValueFromID(r.sortingLayerID);
+                    if (v < pValue || (v == pValue && r.sortingOrder < pOrder)) below = true;
+                    minOrder = Mathf.Min(minOrder, r.sortingOrder);
+                }
+                if (!below) continue;
+                foreach (var r in rs)
+                {
+                    int rel = r.sortingOrder - minOrder;
+                    r.sortingLayerID = pLayer;
+                    r.sortingOrder = pOrder + 1 + rel;
+                }
+                Plugin.Log.LogInfo("Grab sorting: " + grabber.name + "/" + root.name + " moved to layer " +
+                                   SortingLayer.IDToName(pLayer) + " (" + rs.Count + " renderers)");
+            }
         }
     }
 }

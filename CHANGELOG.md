@@ -25,6 +25,8 @@
   numeric boundaries the zoom baseline is capped to the bounded size and the speed-based zoom pauses at the bounds.
 - Camera: the view stops at boundary walls (exit fog) instead of showing the empty area behind them on wide screens;
   rooms narrower than the view are centred.
+- Grab animations of randomized enemies are drawn at the player's depth: a grab object sorted below the player (its
+  home area's layers) was hidden behind the scenery of the new area.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld
