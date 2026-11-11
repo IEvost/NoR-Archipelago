@@ -20,7 +20,8 @@
   wrapping over the next entry; labels in menus that were hidden at load are fitted when the menu opens.
 - Altar teleport menu: area name labels are 40% wider and stay on one line.
 - Camera: fixed the camera jittering every frame (ghosting) in rooms narrower than the view - ultrawide screens or a
-  zoomed-out camera. The collider boundaries pushed it +-0.1 between both walls; it is now centred between them. For
+  zoomed-out camera. While the player is idle the collider boundaries nudged it +-0.1 off a wall and back every frame;
+  a nudge that reverses the previous one is now ignored. For
   numeric boundaries the zoom baseline is capped to the bounded size and the speed-based zoom pauses at the bounds.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
