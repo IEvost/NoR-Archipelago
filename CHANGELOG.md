@@ -14,6 +14,8 @@
 - Censor quads (Ist/MosaicField) are drawn after all characters. The shader copies the screen once per frame through
   a named grab pass; a quad in a lower sorting layer on screen made every other quad paste background over the scene
   (dark squares, also with uncensor patches). Config `FixMosaicOrder`.
+- Widescreen: level sky backdrops (attached to the camera by SceneStartEffect, sized for 16:9) are scaled uniformly
+  to cover wider screens - no more blank strips at the left/right edges.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld
