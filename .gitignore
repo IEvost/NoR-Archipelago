@@ -35,3 +35,5 @@ data/runtime/enemies.tsv
 # Test build output
 tests/**/bin/
 tests/**/obj/
+
+.claude/settings.local.json
