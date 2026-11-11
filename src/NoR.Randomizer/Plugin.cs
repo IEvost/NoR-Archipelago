@@ -90,6 +90,8 @@ namespace NoR.Randomizer
                 "Share of max HP lost on a wrong QTE input.").Value);
             Gameplay.GrabQte.LockSeconds = Mathf.Max(0f, Config.Bind("Gameplay", "KnockdownLockSeconds", 3f,
                 "After a non-lethal knockdown Aradia cannot get up for this many seconds (gives enemies a chance to grab). 0 = vanilla.").Value);
+            Gameplay.GrabQte.RushMultiplier = Mathf.Max(1f, Config.Bind("Gameplay", "DownedRushSpeed", 1.8f,
+                "Movement speed multiplier of enemies walking to a downed Aradia to grab her. 1 = vanilla.").Value);
             Gameplay.GrabQte.Create();
 
             var harmony = new Harmony(Guid);

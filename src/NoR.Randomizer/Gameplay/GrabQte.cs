@@ -28,6 +28,7 @@ namespace NoR.Randomizer.Gameplay
         public static KeySet Keys = KeySet.FullKeyboard;
         public static float WrongInputDamage = 0.10f;
         public static bool EscapeBlocked;
+        public static float RushMultiplier = 1.8f;
 
         public static GrabQte Instance { get; private set; }
 
@@ -40,6 +41,8 @@ namespace NoR.Randomizer.Gameplay
         private bool _active;
         private float _flashWrongUntil;
         private float _prevH, _prevV;
+        private bool _injectEscape;
+        private float _escapeAt = -100f;
         private GUIStyle _style, _boxStyle;
 
         public static void Create()
@@ -79,7 +82,7 @@ namespace NoR.Randomizer.Gameplay
                 _active = false;
                 return;
             }
-            if (!_active) { _active = true; NewSequence(); }
+            if (!_active) { _active = true; NewSequence(); LogGrabbers(); }
 
             string pressed = ReadInput(pc);
             if (pressed == null) return;
@@ -145,18 +148,66 @@ namespace NoR.Randomizer.Gameplay
             NewSequence();
         }
 
-        /// <summary>The vanilla stand-up (playercon.fun_nowdamage) - the grabbing enemy releases when erodown == 0.</summary>
+        /// <summary>
+        /// Escape through the vanilla stand-up in playercon.fun_nowdamage (the grabbing enemy releases when erodown == 0):
+        /// downup is set to 1 and one Submit press is injected, so the game runs its own full reset (voice bus, gravity,
+        /// damage timer, HUD face). Fallback after 0.3 s: the same reset done by hand.
+        /// </summary>
         private void Escape(playercon pc)
         {
             _active = false;
+            _injectEscape = true;
+            _escapeAt = Time.time;
+            _downSince = -100f;
+            Plugin.Log.LogInfo("Grab QTE: escaped");
+        }
+
+        internal static bool TakeInjectedEscape(playercon pc)
+        {
+            if (Instance == null || !Instance._injectEscape) return false;
+            Instance._injectEscape = false;
+            var t = Traverse.Create(pc);
+            t.Field("downup").SetValue(1);
+            t.Field("easyESC").SetValue(false);
+            return true;
+        }
+
+        private void LateUpdate()
+        {
+            if (_escapeAt < 0f || Time.time - _escapeAt < 0.3f) return;
+            _escapeAt = -100f;
+            var pc = Player();
+            if (pc == null || pc.erodown == 0) return;
+            Plugin.Log.LogWarning("Grab QTE: vanilla stand-up did not run (grounded=" + pc.m_Grounded + "), forcing release");
+            var t = Traverse.Create(pc);
+            DarkTonic.MasterAudio.MasterAudio.StopBus("EroVoice");
             pc.erodown = 0;
             pc.nowdamage = false;
             pc.tough = pc.maxtough;
-            var t = Traverse.Create(pc);
+            t.Field("damecount").SetValue(0f);
             t.Field("downup").SetValue(0);
+            t.Field("walldown").SetValue(0f);
             t.Field("easyESC").SetValue(false);
-            _downSince = -100f;
-            Plugin.Log.LogInfo("Grab QTE: escaped");
+            var rb = pc.rigi2d;
+            if (rb != null) rb.gravityScale = t.Field("gravity").GetValue<float>();
+        }
+
+        /// <summary>Diagnostic: which enemies hold the player when a QTE starts (to track grabs without an animation).</summary>
+        private static void LogGrabbers()
+        {
+            try
+            {
+                var sb = new System.Text.StringBuilder();
+                foreach (var e in FindObjectsOfType<EnemyDate>())
+                {
+                    if (!e.eroflag) continue;
+                    var data = e.erodata;
+                    sb.Append(' ').Append(e.name).Append(" (ero object ")
+                      .Append(data == null ? "none" : data.activeInHierarchy ? "active" : "INACTIVE").Append(')');
+                }
+                Plugin.Log.LogInfo("Grab QTE: grabbed by" + (sb.Length == 0 ? " nobody (no enemy has eroflag)" : sb.ToString()));
+            }
+            catch (System.Exception ex) { Plugin.Log.LogDebug("Grab log failed: " + ex.Message); }
         }
 
         private void OnGUI()
@@ -192,6 +243,7 @@ namespace NoR.Randomizer.Gameplay
     {
         private static void Prefix(playercon __instance, ref bool ___key_submit, ref bool ___key_atk)
         {
+            if (GrabQte.TakeInjectedEscape(__instance)) { ___key_submit = true; return; }
             if (!GrabQte.BlockVanillaPresses(__instance)) return;
             ___key_submit = false;
             ___key_atk = false;
@@ -205,6 +257,39 @@ namespace NoR.Randomizer.Gameplay
         private static bool Prefix(playercon __instance)
         {
             return !GrabQte.BlockVanillaPresses(__instance);
+        }
+    }
+
+    /// <summary>
+    /// Enemies walking to a downed (not yet grabbed) player rush: EROWALK movement through the shared EnemyDate speed
+    /// helpers is multiplied by RushMultiplier. Animations are unchanged.
+    /// </summary>
+    [HarmonyPatch]
+    internal static class DownedRushPatch
+    {
+        private static readonly Dictionary<System.Type, System.Reflection.FieldInfo> StateFields = new Dictionary<System.Type, System.Reflection.FieldInfo>();
+
+        private static IEnumerable<System.Reflection.MethodBase> TargetMethods()
+        {
+            yield return AccessTools.Method(typeof(EnemyDate), "fun_rigidSpeed_minus");
+            yield return AccessTools.Method(typeof(EnemyDate), "fun_rigidSpeed_plus");
+        }
+
+        private static void Prefix(EnemyDate __instance, ref float multiply)
+        {
+            if (GrabQte.RushMultiplier == 1f) return;
+            var pc = __instance.com_player;
+            if (pc == null || pc.erodown == 0 || pc.eroflag) return;
+            System.Reflection.FieldInfo f;
+            var type = __instance.GetType();
+            if (!StateFields.TryGetValue(type, out f))
+            {
+                f = AccessTools.Field(type, "state");
+                StateFields[type] = f;
+            }
+            if (f == null) return;
+            var st = f.GetValue(__instance);
+            if (st != null && st.ToString() == "EROWALK") multiply *= GrabQte.RushMultiplier;
         }
     }
 }

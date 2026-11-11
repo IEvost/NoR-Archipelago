@@ -4,6 +4,9 @@
 - Typewriter text (opening narration, event dialogue, game-over texts) now rolls out in English instead of Japanese
   that switched to English only when the line was complete.
 - The potion-switch button no longer works while grabbed (QTE) or during the knockdown lockout.
+- Grab QTE escape now runs the game's own stand-up code (voice, gravity, damage timer, HUD face reset) instead of a
+  partial manual reset; a fallback forces the release if it does not run. The log names the grabbing enemy.
+- **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld
 - **English dialogue**: event/NPC dialogue stored in data assets (MainEV, SubEventDialogue, NpcTalk, ...) is now
