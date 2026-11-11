@@ -50,6 +50,7 @@ namespace NoR.Widescreen
             LogCanvases = Config.Bind("Debug", "LogCanvases", false, "Log every canvas adjusted (for troubleshooting).");
 
             CameraZoom.Create(Config);
+            MosaicOrderFix.Create(Config);
             if (Mode.Value == AspectMode.Off) return;
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             SceneManager.sceneLoaded += (s, m) => UiFixer.FixAll();

@@ -11,6 +11,9 @@
   The drain is not lethal: it stops at 10% HP (one wrong input), so only a failed QTE input can kill.
 - Camera: after changing the zoom level the camera no longer pumps in and out while standing still (the game's
   speed-based zoom kept the vanilla baseline and fought the stuck-zoom watchdog).
+- Censor quads (Ist/MosaicField) are drawn after all characters. The shader copies the screen once per frame through
+  a named grab pass; a quad in a lower sorting layer on screen made every other quad paste background over the scene
+  (dark squares, also with uncensor patches). Config `FixMosaicOrder`.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld
