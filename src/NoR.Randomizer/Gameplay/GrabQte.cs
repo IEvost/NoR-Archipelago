@@ -29,6 +29,8 @@ namespace NoR.Randomizer.Gameplay
         public static float WrongInputDamage = 0.10f;
         public static bool EscapeBlocked;
         public static float RushMultiplier = 1.8f;
+        public static float DrainPerSecond = 0.03f;
+        public static float EnemyHealBonus = 200f;
 
         public static GrabQte Instance { get; private set; }
 
@@ -43,6 +45,7 @@ namespace NoR.Randomizer.Gameplay
         private float _prevH, _prevV;
         private bool _injectEscape;
         private float _escapeAt = -100f;
+        private float _nextDrain;
         private GUIStyle _style, _boxStyle;
 
         public static void Create()
@@ -82,7 +85,13 @@ namespace NoR.Randomizer.Gameplay
                 _active = false;
                 return;
             }
-            if (!_active) { _active = true; NewSequence(); LogGrabbers(); }
+            if (!_active) { _active = true; NewSequence(); LogGrabbers(); _nextDrain = Time.time + 1f; }
+
+            if (DrainPerSecond > 0f && Time.time >= _nextDrain)
+            {
+                _nextDrain += 1f;
+                if (Damage(pc, DrainPerSecond)) return;
+            }
 
             string pressed = ReadInput(pc);
             if (pressed == null) return;
@@ -139,13 +148,36 @@ namespace NoR.Randomizer.Gameplay
         private void Wrong(playercon pc)
         {
             _flashWrongUntil = Time.unscaledTime + 0.4f;
-            var st = GameRefs.Status;
-            if (st != null)
-            {
-                st.Hp -= st.MaxHp * WrongInputDamage;
-                if (st.Hp <= 0f) { st.Hp = 0f; pc.SpDeath(); _active = false; return; }
-            }
+            if (Damage(pc, WrongInputDamage)) return;
             NewSequence();
+        }
+
+        /// <summary>
+        /// Takes share * max HP from the player and heals the grabbing enemy by (damage dealt + EnemyHealBonus), capped at
+        /// its max HP. Returns true if the player died.
+        /// </summary>
+        private bool Damage(playercon pc, float share)
+        {
+            var st = GameRefs.Status;
+            if (st == null || share <= 0f) return false;
+            float dealt = Mathf.Min(st.Hp, st.MaxHp * share);
+            st.Hp -= dealt;
+            var grabber = Grabber();
+            if (grabber != null && grabber.Hp > 0f)
+                grabber.Hp = Mathf.Min(grabber.MaxHp, grabber.Hp + dealt + EnemyHealBonus);
+            if (st.Hp <= 0f) { st.Hp = 0f; pc.SpDeath(); _active = false; return true; }
+            return false;
+        }
+
+        private EnemyDate _grabber;
+
+        private EnemyDate Grabber()
+        {
+            if (_grabber != null && _grabber.eroflag) return _grabber;
+            _grabber = null;
+            foreach (var e in FindObjectsOfType<EnemyDate>())
+                if (e.eroflag) { _grabber = e; break; }
+            return _grabber;
         }
 
         /// <summary>
