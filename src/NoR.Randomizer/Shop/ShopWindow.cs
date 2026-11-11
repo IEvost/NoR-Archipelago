@@ -273,7 +273,7 @@ namespace NoR.Randomizer.Shop
                         case "UseItem": n = inv._USE[idx].Itemname; sprite = inv._USE[idx].name; break;
                         case "magic":
                             var src = Plugin.Table.MagicSource(part);
-                            if (src != null) { n = src.DisplayJp; sprite = src.MagicName; }
+                            if (src != null) { n = TextHooks.T(src.DisplayJp); sprite = src.MagicName; }
                             break;
                     }
                     if (icon == null && sprite != null) icon = pl._atlas_sprite.GetSprite(sprite);

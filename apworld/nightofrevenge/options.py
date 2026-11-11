@@ -48,6 +48,12 @@ class TrapPercentage(Range):
     default = 10
 
 
+class LewdTraps(DefaultOnToggle):
+    """Add lewd status traps to the trap pool: Aphrodisiac Trap (fills the Pleasure Paralysis meter, like the pink breath
+    of some enemies). Only matters when trap_percentage is above 0."""
+    display_name = "Lewd Traps"
+
+
 class DeathLinkMode(Choice):
     """What an incoming DeathLink does.
     defeat_state: Aradia is downed and cannot get up until an enemy catches her or you choose to give up.
@@ -67,5 +73,6 @@ class NightOfRevengeOptions(PerGameCommonOptions):
     shuffle_keys: ShuffleKeys
     enemy_randomizer: EnemyRandomizer
     trap_percentage: TrapPercentage
+    lewd_traps: LewdTraps
     death_link: DeathLink
     death_link_mode: DeathLinkMode

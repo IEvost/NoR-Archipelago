@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -21,7 +21,7 @@ internal static class Program
 {
     private const long LocationBase = 7_700_000;
     private const long ItemBase = 7_700_000;
-    private const int DataVersion = 2;
+    private const int DataVersion = 3;
     private const string StartRegion = "FirstMap";
     private const string GoalRegion = "LastBoss";
 
@@ -34,7 +34,10 @@ internal static class Program
         ["trap:ambush"] = "Ambush Trap",
         ["trap:idea"] = "Idea Drain Trap",
         ["trap:knockdown"] = "Knockdown Trap",
+        ["trap:aphrodisiac"] = "Aphrodisiac Trap", // lewd trap (option lewd_traps)
     };
+
+    private static readonly HashSet<string> LewdTraps = new() { "trap:aphrodisiac" };
 
     private sealed record Loc(string Key, string Category, string Name, string VanillaCode, int Slot, string Region);
 
@@ -160,7 +163,8 @@ internal static class Program
         py.AppendLine();
         py.AppendLine($"DATA_VERSION = {DataVersion}");
         py.AppendLine($"FILLER_ITEM = {Py(ItemName("UseItem:9"))}");
-        py.AppendLine($"TRAPS = [{string.Join(", ", Traps.Keys.Select(k => Py(ItemName(k))))}]");
+        py.AppendLine($"TRAPS = [{string.Join(", ", Traps.Keys.Where(k => !LewdTraps.Contains(k)).Select(k => Py(ItemName(k))))}]");
+        py.AppendLine($"LEWD_TRAPS = [{string.Join(", ", Traps.Keys.Where(k => LewdTraps.Contains(k)).Select(k => Py(ItemName(k))))}]");
         py.AppendLine($"START_REGION = {Py(StartRegion)}");
         py.AppendLine($"GOAL_REGION = {Py(GoalRegion)}");
         py.AppendLine();

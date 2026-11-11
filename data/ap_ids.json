@@ -359,6 +359,7 @@
     "trap:knockdown": 7700090,
     "UseItem:60": 7700091,
     "UseItem:61": 7700092,
-    "UseItem:62": 7700093
+    "UseItem:62": 7700093,
+    "trap:aphrodisiac": 7700094
   }
 }

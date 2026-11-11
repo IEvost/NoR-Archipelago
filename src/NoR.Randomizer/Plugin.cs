@@ -18,7 +18,7 @@ namespace NoR.Randomizer
     {
         public const string Guid = "nor.archipelago.randomizer";
         public const string Name = "NoR Randomizer";
-        public const string Version = "0.1.2";
+        public const string Version = "0.2.0";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         public static LocationTable Table;
@@ -68,9 +68,34 @@ namespace NoR.Randomizer
             if (Config.Bind("Gameplay", "Console", true, "Backup console (` or F12): give items/keys, karma, Idea. Use if logic is wrong or you are stuck.").Value)
                 DebugConsole.Create();
 
+            EnemyScaling.Enabled = Config.Bind("Enemies", "ScaleToAreaTier", true,
+                "Scale randomized enemies (HP, damage, Idea reward) towards the average of the area's original enemies.").Value;
+            EnemyScaling.Strength = Mathf.Clamp01(Config.Bind("Enemies", "ScalingStrength", 0.8f,
+                "1 = every enemy in an area gets exactly the area's average stats; lower keeps more of each enemy's own strength (0 = no scaling).").Value);
+            EnemyScaling.Load();
+            foreach (var s in Config.Bind("Enemies", "ExcludeScenes", "",
+                "Comma-separated scenes whose spawners keep vanilla enemies (event scenes EV*/Ev* are always excluded).").Value.Split(','))
+                if (s.Trim().Length > 0) EnemyPool.ExcludedScenes.Add(s.Trim());
+            DoubleHitFix.Enabled = Config.Bind("Gameplay", "FixDoubleHit", true,
+                "Fix the vanilla bug where one swing can hit an enemy twice.").Value;
+
+            Gameplay.DialogueSkip.Enabled = Config.Bind("Gameplay", "DialogueSkip", true,
+                "Hold Left Ctrl (or the gamepad Step button) to fast-forward dialogue. Stops at choices.").Value;
+            Gameplay.DialogueSkip.Key = Config.Bind("Gameplay", "DialogueSkipKey", KeyCode.LeftControl, "Keyboard key for dialogue fast-forward.").Value;
+            Gameplay.GrabQte.QteEnabled = Config.Bind("Gameplay", "GrabQte", true,
+                "When grabbed, enter 4-6 prompted inputs to break free (replaces vanilla mashing). A wrong input costs HP.").Value;
+            Gameplay.GrabQte.Keys = Config.Bind("Gameplay", "GrabQteKeys", Gameplay.GrabQte.KeySet.FullKeyboard,
+                "FullKeyboard: letters A-Z. MovementAttack: Up/Down/Left/Right/Attack (also works on a gamepad).").Value;
+            Gameplay.GrabQte.WrongInputDamage = Mathf.Clamp01(Config.Bind("Gameplay", "GrabQteWrongDamage", 0.10f,
+                "Share of max HP lost on a wrong QTE input.").Value);
+            Gameplay.GrabQte.LockSeconds = Mathf.Max(0f, Config.Bind("Gameplay", "KnockdownLockSeconds", 3f,
+                "After a non-lethal knockdown Aradia cannot get up for this many seconds (gives enemies a chance to grab). 0 = vanilla.").Value);
+            Gameplay.GrabQte.Create();
+
             var harmony = new Harmony(Guid);
             harmony.PatchAll(typeof(Plugin).Assembly);
             Patches.RewardPatches.Apply(harmony);
+            Gameplay.DialogueSkip.Apply(harmony);
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -93,6 +118,8 @@ namespace NoR.Randomizer
             if (scene.name != "Gametitle" || EnemyPool.Instance != null || !_enemies.Value) return;
             var excluded = new HashSet<string>(StringComparer.Ordinal);
             foreach (var n in _enemyExclude.Value.Split(',')) if (n.Trim().Length > 0) excluded.Add(n.Trim());
+            foreach (var n in EnemyPool.DefaultExcludedPrefabs) excluded.Add(n);
+            foreach (var n in EnemyPool.KeepVanillaAtSpawn) excluded.Add(n);
             var pool = EnemyPool.Create(excluded);
             var plan = EnemyPool.PlanScenes(EnemyPool.LoadCatalog(), excluded);
             Log.LogInfo("Enemy pool: loading " + plan.Count + " scenes: " + string.Join(", ", plan.ToArray()));
@@ -176,7 +203,7 @@ namespace NoR.Randomizer
                     string item;
                     if (!st.Placement.TryGetValue(l.Key, out item)) continue;
                     if (l.Scene != scene) { scene = l.Scene; sb.AppendLine().AppendLine("[" + scene + "]"); }
-                    sb.AppendLine("  " + l.Key + "  ->  " + item + "  (" + Describe(item) + ")   [vanilla: " + l.DisplayJp + "]");
+                    sb.AppendLine("  " + l.Key + "  ->  " + item + "  (" + Describe(item) + ")   [vanilla: " + NoR.Core.TextHooks.T(l.DisplayJp) + "]");
                 }
                 File.WriteAllText(Path.Combine(_outDir, "spoiler_" + st.Seed + ".txt"), sb.ToString(), new UTF8Encoding(false));
             }
@@ -195,13 +222,13 @@ namespace NoR.Randomizer
                 if (part.StartsWith("magic:", StringComparison.Ordinal))
                 {
                     var src = Table.MagicSource(part);
-                    parts.Add(src != null ? src.DisplayJp : part);
+                    parts.Add(src != null ? NoR.Core.TextHooks.T(src.DisplayJp) : part);
                     continue;
                 }
                 string name = null;
                 foreach (var l in Table.All)
                 {
-                    if (l.Vanilla == part) { name = l.DisplayJp; break; }
+                    if (l.Vanilla == part) { name = NoR.Core.TextHooks.T(l.DisplayJp); break; }
                 }
                 parts.Add(name ?? part);
             }

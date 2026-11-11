@@ -114,8 +114,9 @@ class NightOfRevengeWorld(World):
         # Replace a share of the filler items with traps.
         filler_indices = [i for i, n in enumerate(pool) if data.ITEMS[n]["classification"] == "filler"]
         trap_count = len(filler_indices) * self.options.trap_percentage.value // 100
+        traps = list(data.TRAPS) + (list(data.LEWD_TRAPS) if self.options.lewd_traps.value else [])
         for i in self.random.sample(filler_indices, trap_count):
-            pool[i] = self.random.choice(data.TRAPS)
+            pool[i] = self.random.choice(traps)
 
         self.multiworld.itempool += [self.create_item(n) for n in pool]
 
@@ -139,6 +140,7 @@ class NightOfRevengeWorld(World):
             "shuffle_keys": self.options.shuffle_keys.value,
             "enemy_randomizer": self.options.enemy_randomizer.value,
             "trap_percentage": self.options.trap_percentage.value,
+            "lewd_traps": self.options.lewd_traps.value,
             "death_link": self.options.death_link.value,
             "death_link_mode": self.options.death_link_mode.value,
             "seed": self.random.randint(1, 999_999_999),

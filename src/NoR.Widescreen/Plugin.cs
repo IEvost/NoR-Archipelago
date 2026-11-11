@@ -23,7 +23,7 @@ namespace NoR.Widescreen
     {
         public const string Guid = "nor.archipelago.widescreen";
         public const string Name = "NoR Widescreen";
-        public const string Version = "0.1.2";
+        public const string Version = "0.2.0";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         internal static ConfigEntry<string> Resolution;
@@ -49,6 +49,7 @@ namespace NoR.Widescreen
                 "Stretch full-screen UI images (fades, dark backgrounds) so they also cover the extra width.");
             LogCanvases = Config.Bind("Debug", "LogCanvases", false, "Log every canvas adjusted (for troubleshooting).");
 
+            CameraZoom.Create(Config);
             if (Mode.Value == AspectMode.Off) return;
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             SceneManager.sceneLoaded += (s, m) => UiFixer.FixAll();
@@ -153,8 +154,37 @@ namespace NoR.Widescreen
                 if (Plugin.StretchOverlays.Value && Plugin.Mode.Value == Plugin.AspectMode.Expand)
                     StretchOverlays(scaler);
             }
+            Reanchor(scaler);
             if (Plugin.LogCanvases.Value)
                 Plugin.Log.LogInfo("Canvas " + scaler.gameObject.name + " mode=" + scaler.uiScaleMode + " ref=" + scaler.referenceResolution + " match=" + scaler.screenMatchMode + "/" + scaler.matchWidthOrHeight);
+        }
+
+        /// <summary>
+        /// HUD elements that the game anchors to the screen centre although their icons are anchored bottom-left /
+        /// bottom-right: the red "X" over weapon/magic slots (not enough stats), the "not enough stats" text and the zoom
+        /// key hint. They only line up at 16:9 (docs/research-feedback.md 5a). Re-anchor them like their icons
+        /// (1280x720 reference: centre (640,360) == bottom-left + (640,360)).
+        /// </summary>
+        private static readonly string[] BottomLeftElements = { "wp_notact", "mg_notact1", "mg_notact2", "mg_notact3", "mg_notact4", "Lowattribute", "Can'tAction" };
+
+        private static void Reanchor(CanvasScaler scaler)
+        {
+            foreach (var rt in scaler.GetComponentsInChildren<RectTransform>(true))
+            {
+                if (rt.anchorMin != new Vector2(0.5f, 0.5f) || rt.anchorMax != new Vector2(0.5f, 0.5f)) continue;
+                string n = rt.name;
+                if (System.Array.IndexOf(BottomLeftElements, n) >= 0)
+                {
+                    var pos = rt.anchoredPosition + new Vector2(640f, 360f);
+                    rt.anchorMin = rt.anchorMax = Vector2.zero;
+                    rt.anchoredPosition = pos;
+                }
+                else if (n == "Zoomkey")
+                {
+                    rt.anchorMin = rt.anchorMax = new Vector2(1f, 0f);
+                    rt.anchoredPosition = new Vector2(-142f, 120f);
+                }
+            }
         }
 
         /// <summary>

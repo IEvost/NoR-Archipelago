@@ -20,6 +20,7 @@
     <EmbeddedResource Include="..\..\data\runtime\enemies.tsv" LogicalName="NoR.Randomizer.enemies.tsv" />
     <EmbeddedResource Include="..\..\data\code_locations.tsv" LogicalName="NoR.Randomizer.code_locations.tsv" />
     <EmbeddedResource Include="..\..\data\shop_pool.txt" LogicalName="NoR.Randomizer.shop_pool.txt" />
+    <EmbeddedResource Include="..\..\data\enemy_stats.tsv" LogicalName="NoR.Randomizer.enemy_stats.tsv" />
   </ItemGroup>
 
   <ItemGroup>

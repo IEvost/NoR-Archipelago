@@ -17,6 +17,7 @@ namespace NoR.Randomizer
                 case "ambush": return Ambush();
                 case "idea": return IdeaDrain();
                 case "knockdown": return Knockdown();
+                case "aphrodisiac": return Aphrodisiac();
                 default:
                     Plugin.Log.LogWarning("Unknown trap " + kind);
                     return null;
@@ -39,6 +40,8 @@ namespace NoR.Randomizer
                 ? Object.Instantiate(template, pos, Quaternion.identity, parent.transform)
                 : Object.Instantiate(template, pos, Quaternion.identity);
             enemy.name = template.name;
+            string scene = parent != null ? parent.gameObject.scene.name : UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            EnemyScaling.Register(enemy, scene, template.name);
             Plugin.Log.LogInfo("Ambush trap: " + template.name);
             return "An enemy ambushes you!";
         }
@@ -51,6 +54,19 @@ namespace NoR.Randomizer
             int loss = Mathf.Min(st.Exppoint, Mathf.Max(100, st.Exppoint / 5));
             st.Exppoint -= loss;
             return loss > 0 ? "Idea drained: -" + loss : "Idea drain (you had nothing to lose)";
+        }
+
+        /// <summary>
+        /// Aphrodisiac (lewd trap): fills the pleasure-paralysis meter (bad status slot 0, the same effect as Mutude's
+        /// pink breath). At 100 the game applies Pleasure Paralysis for ~20 s (docs/research-combat.md 3.1).
+        /// </summary>
+        private static string Aphrodisiac()
+        {
+            var st = GameRefs.Status;
+            if (st == null) return null;
+            if (GameObject.FindWithTag("Badinfo") == null) return Knockdown(); // status HUD missing: the game would throw
+            st.BadstatusValPlus(100f);
+            return "A sweet pink mist... Pleasure Paralysis!";
         }
 
         /// <summary>Knocks Aradia down like a heavy hit (she can get up normally).</summary>

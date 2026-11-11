@@ -31,12 +31,46 @@ namespace NoR.Randomizer
         private HashSet<string> _excluded;
         private static readonly FieldInfo EnemyField = typeof(Spawnenemy).GetField("enemy", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
+        /// <summary>
+        /// Event-only enemy variants: they run event/camera logic when spawned (e.g. zoom-to-fit targets) and break or
+        /// stall things outside their event. Never used as replacements.
+        /// </summary>
+        public static readonly string[] DefaultExcludedPrefabs =
+        {
+            "EVSlaveBigAxe", "EVNomalSlaveBigAxe", "CrowInquisition_hide", "CocoonmanStart",
+            "Sheephead",                                                      // carries an event DeathCount (Forest house battle)
+            "Minotaurosu_dif", "DifferentBigMerman", "Inquisition_white_dif", // unique weapon drop + stage flag
+        };
+
+        /// <summary>
+        /// Enemies that carry one-time treasures / progression flags (Bigoni sets the hexagonal key flag needed by the
+        /// village witch rescue; Slaughterer carries a treasure). Their spawn points keep them, and they are not used
+        /// as replacements elsewhere (no duplicate drops / early flags).
+        /// </summary>
+        public static readonly HashSet<string> KeepVanillaAtSpawn = new HashSet<string>(StringComparer.Ordinal) { "Bigoni_spine", "Slaughterer" };
+
+        /// <summary>Extra scenes whose spawners must stay vanilla (config); event scenes are always excluded.</summary>
+        public static readonly HashSet<string> ExcludedScenes = new HashSet<string>(StringComparer.Ordinal);
+
+        /// <summary>
+        /// Event scenes (EV*/Ev*: e.g. EVuChurch, the merchant rescue) wait for specific enemies to die before the story
+        /// continues - randomizing them stalls the event, so their spawners keep the vanilla enemies.
+        /// </summary>
+        public static bool IsExcludedScene(string scene)
+        {
+            if (string.IsNullOrEmpty(scene)) return false;
+            if (scene.StartsWith("EV", StringComparison.Ordinal) || scene.StartsWith("Ev", StringComparison.Ordinal)) return true;
+            return ExcludedScenes.Contains(scene);
+        }
+
         public static EnemyPool Create(IEnumerable<string> excluded)
         {
             var go = new GameObject("NoR.EnemyPool");
             DontDestroyOnLoad(go);
             var pool = go.AddComponent<EnemyPool>();
             pool._excluded = new HashSet<string>(excluded, StringComparer.Ordinal);
+            foreach (var p in DefaultExcludedPrefabs) pool._excluded.Add(p);
+            foreach (var p in KeepVanillaAtSpawn) pool._excluded.Add(p);
 
             var holder = new GameObject("Templates");
             holder.SetActive(false); // children never Awake while parked here

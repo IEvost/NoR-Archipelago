@@ -22,7 +22,7 @@ namespace NoR.Localization
     {
         public const string Guid = "nor.archipelago.localization";
         public const string Name = "NoR English";
-        public const string Version = "0.1.2";
+        public const string Version = "0.2.0";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         internal static TranslationTable Table;
@@ -43,6 +43,7 @@ namespace NoR.Localization
 
             _dir = Path.Combine(Path.GetDirectoryName(Info.Location), "translation");
             Table = TranslationTable.Load(_dir, "en");
+            NoR.Core.TextHooks.Translate = s => Table.Translate(s);
             Log.LogInfo("Translation table: " + Table.Count + " strings");
 
             var harmony = new Harmony(Guid);

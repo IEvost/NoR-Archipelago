@@ -18,7 +18,7 @@ namespace NoR.Archipelago
         public const string GameName = "Night of Revenge";
 
         /// <summary>Must equal DATA_VERSION in the generated apworld data (tools/NoR.ApWorldGen DataVersion).</summary>
-        public const int ExpectedDataVersion = 2;
+        public const int ExpectedDataVersion = 3;
 
         private readonly Connection _conn;
         private readonly ApMap _map;
@@ -103,10 +103,10 @@ namespace NoR.Archipelago
             });
 
             long worldVersion = Long(ok.SlotData, "version", 0);
-            if (worldVersion != ExpectedDataVersion)
+            if (worldVersion > ExpectedDataVersion) // older worlds stay compatible; a newer world needs a newer mod
             {
-                _notes.Add("Archipelago: the seed was generated with apworld data version " + worldVersion + ", this mod expects " +
-                           ExpectedDataVersion + ". Use matching versions of the mod and nightofrevenge.apworld.", Notifications.Kind.Error);
+                _notes.Add("Archipelago: the seed was generated with a newer apworld (data version " + worldVersion + ") than this mod supports (" +
+                           ExpectedDataVersion + "). Update the mod.", Notifications.Kind.Error);
                 Plugin.Log.LogWarning("Data version mismatch: world " + worldVersion + ", client " + ExpectedDataVersion);
             }
             _template = BuildTemplate(ok.SlotData, session.RoomState.Seed);

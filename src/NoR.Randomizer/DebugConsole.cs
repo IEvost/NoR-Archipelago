@@ -240,7 +240,7 @@ namespace NoR.Randomizer
             for (int i = 0; i < inv._RING.Count && n < 30; i++) if (Match(inv._RING[i].Itemname, text)) { Print("crestring:" + i + "  " + inv._RING[i].Itemname); n++; }
             for (int i = 0; i < inv._USE.Count && n < 30; i++) if (Match(inv._USE[i].Itemname, text)) { Print("UseItem:" + i + "  " + inv._USE[i].Itemname); n++; }
             foreach (var l in Plugin.Table.All)
-                if (l.Category == "magic" && n < 30 && Match(l.MagicName + " " + l.DisplayJp, text)) { Print(l.Vanilla + "  " + l.MagicName); n++; }
+                if (l.Category == "magic" && n < 30 && Match(l.MagicName + " " + TextHooks.T(l.DisplayJp), text)) { Print(l.Vanilla + "  " + TextHooks.T(l.DisplayJp)); n++; }
             if (n == 0) Print("No match.");
         }
 

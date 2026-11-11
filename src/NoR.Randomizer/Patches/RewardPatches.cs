@@ -46,9 +46,9 @@ namespace NoR.Randomizer.Patches
                 string item;
                 if (Plugin.State == null || !Plugin.State.Placement.TryGetValue(key, out item)) return true;
 
+                if (!Checks.Collect(key, item)) return false; // repeated call: suppress the vanilla drop, do nothing else
                 MasterAudio.StopAllOfSound("snd_getitem1");
                 MasterAudio.PlaySound("snd_getitem1");
-                Checks.Collect(key, item);
                 Plugin.Log.LogInfo("Checked " + key + " -> " + item);
                 return false; // skip spawning the vanilla drop
             }
@@ -64,8 +64,7 @@ namespace NoR.Randomizer.Patches
             string key = "trade:" + ___tradeflagnum;
             string item;
             if (Plugin.State == null || !Plugin.State.Placement.TryGetValue(key, out item)) return true;
-            Checks.Collect(key, item);
-            Plugin.Log.LogInfo("Checked " + key + " -> " + item);
+            if (Checks.Collect(key, item)) Plugin.Log.LogInfo("Checked " + key + " -> " + item);
             return false; // BuyOK still consumes the cost and sets _Tradeflag
         }
     }

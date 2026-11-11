@@ -106,14 +106,14 @@ namespace NoR.Archipelago
         }
 
         /// <summary>Starts NoR.ApBridge.exe for the target and returns its local port.</summary>
-        private int StartBridge(string target, string tls)
+        private int StartBridge(string target, string tls, string mode = "ws")
         {
             StopBridge();
             string exe = Path.Combine(_pluginDir, "NoR.ApBridge.exe");
             if (!File.Exists(exe)) throw new FileNotFoundException("NoR.ApBridge.exe missing next to the plugin", exe);
 
             var psi = new ProcessStartInfo(exe,
-                "--target " + target + " --tls " + tls + " --listen 0 --parent-pid " + Process.GetCurrentProcess().Id)
+                "--target " + target + " --tls " + tls + " --mode " + mode + " --listen 0 --parent-pid " + Process.GetCurrentProcess().Id)
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
@@ -141,7 +141,7 @@ namespace NoR.Archipelago
         /// <summary>Starts the bridge with TLS forced on (diagnostics only); returns the local port.</summary>
         public int StartBridgeForDiagnostics(string target)
         {
-            return StartBridge(target, "on");
+            return StartBridge(target, "on", "tcp"); // raw HTTP test needs the byte tunnel, not the WebSocket proxy
         }
 
         private void StopBridge()

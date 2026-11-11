@@ -59,7 +59,7 @@ namespace NoR.Randomizer
             arr[num] = true;
 
             var src = table.MagicSource(code);
-            canvas.magic_get(src != null ? src.MagicName : string.Empty, src != null ? src.DisplayJp : code);
+            canvas.magic_get(src != null ? src.MagicName : string.Empty, src != null ? NoR.Core.TextHooks.T(src.DisplayJp) : code);
         }
 
         public static bool[] MagicArray(game_fragmng flags, string school)

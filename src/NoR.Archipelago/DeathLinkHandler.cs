@@ -66,6 +66,8 @@ namespace NoR.Archipelago
             _wasDead = dead;
 
             if (_forcedDown) HoldDown(pc);
+            // No QTE and no vanilla struggle while a DeathLink holds Aradia: it always ends in death (or a skip).
+            NoR.Randomizer.Gameplay.GrabQte.EscapeBlocked = _forcedDown;
         }
 
         private void OnPlayerDied()

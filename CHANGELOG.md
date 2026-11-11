@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.2.0 - feedback from the first real multiworld
+- **English dialogue**: event/NPC dialogue stored in data assets (MainEV, SubEventDialogue, NpcTalk, ...) is now
+  translated (about 2,600 lines that still appeared in Japanese, letter by letter).
+- Received spells show English names ("Thunderbolt acquired." instead of Japanese).
+- **Enemy area-tier scaling**: randomized enemies are scaled towards the average HP / damage / Idea of the area's
+  original enemies (`ScaleToAreaTier`, `ScalingStrength` 0.8).
+- **Double-hit fix** (vanilla bug): one swing can no longer hit an enemy twice.
+- **Dialogue fast-forward**: hold Left Ctrl (or gamepad Step); stops at choices.
+- **Grab QTE**: 4-6 prompted inputs to break free (letters A-Z, or Up/Down/Left/Right/Attack via `GrabQteKeys`);
+  a wrong input costs 10% max HP and restarts. Knockdowns keep Aradia down for 3 s so enemies can grab.
+  DeathLink grabs cannot be escaped.
+- **Aphrodisiac Trap** (Pleasure Paralysis) behind the new apworld option `lewd_traps` (default on).
+- **Camera**: PageUp/PageDown/Home zoom in/out/reset (saved), automatic fix for the camera staying zoomed in after
+  rescue events.
+- Enemy randomizer: event battles (merchant rescue in EVuChurch, Forest house) and event-only enemy variants are kept
+  vanilla - fixes the merchant not appearing / not being able to leave. "Attack to rescue" monsters are randomized.
+  Treasure carriers (Bigoni: hexagonal key flag for the village witch, Slaughterer) keep their spawn points.
+- UI: translated labels in small boxes shrink to fit (altar/teleport menu and others); the red "X" / "not enough
+  stats" markers are positioned correctly on ultrawide screens.
+- Fix: Suzune's rewards were checked dozens of times (event calls its reward every frame) - locations now count once.
+- Fix: startup connection diagnostic.
+- apworld data version 3 (new trap item). Seeds from 0.1.x keep working with this mod.
+
 ## 0.1.2
 - **WebSocket compression**: `NoR.ApBridge` is now a WebSocket proxy. The game's connection is terminated in the
   bridge and a modern client with permessage-deflate (plus TLS) talks to the server, so the "client does not

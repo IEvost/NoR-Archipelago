@@ -28,6 +28,7 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
      shuffle_keys: false   # experimental key logic
      enemy_randomizer: true
      trap_percentage: 10   # 0-50
+     lewd_traps: true      # Aphrodisiac Trap in the trap pool
      death_link: false
      death_link_mode: defeat_state   # or instant_respawn
    ```
@@ -49,6 +50,9 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
 | F1 | Archipelago window (title screen; in game it opens the window to reconnect) |
 | B / gamepad item-switch | Witch's Market at a save point |
 | G / hold Jump 2 s | Skip and respawn after a death or DeathLink |
+| hold Left Ctrl / gamepad Step | Fast-forward dialogue (stops at choices) |
+| PageUp / PageDown / Home | Camera zoom in / out / reset |
+| shown letters (or arrows + attack) | Grab QTE: break free; a wrong input costs 10% HP |
 | ` or F12 | **Server log** (full history: who sent what, joins/leaves, chat, hints; type chat/commands there) and **Console** tab (give items/keys if you are stuck) |
 
 ## Troubleshooting
