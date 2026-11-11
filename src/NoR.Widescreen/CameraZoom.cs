@@ -211,31 +211,19 @@ namespace NoR.Widescreen
 namespace NoR.Widescreen
 {
     /// <summary>
-    /// Geometry Boundaries (3D collider walls): when the camera has no movement of its own (player idle), a corner ray
-    /// that touches a wall forces a 0.1 nudge; with a view wider than the game was made for (ultrawide, zoomed out) the
-    /// nudge overshoots and the next frame nudges back - the camera flips +-0.1 every frame (ghosting) until the player
-    /// walks away. Speed Based Zoom then reads ~22 u/s and zooms out too. While idle, ignore a nudge that reverses the
-    /// last applied one; any real camera movement resets this.
+    /// Geometry Boundaries (3D collider walls, e.g. the fog at area exits): when the camera has no movement of its own
+    /// (player idle), a corner ray inside a wall forces a 0.1 nudge away from it. With a view wider than the game was
+    /// made for (ultrawide, zoomed out) the view already overlaps the wall while centred on the player, so the nudge and
+    /// the camera follow pull against each other: +-0.1 every frame (ghosting), and Speed Based Zoom reads ~22 u/s and
+    /// zooms out. Drop the idle nudge on that axis; walls still block the camera while it moves.
     /// </summary>
     [HarmonyPatch(typeof(ProCamera2DGeometryBoundaries), "AdjustDelta")]
-    internal static class GeometryBoundsFlipPatch
+    internal static class GeometryBoundsIdleNudgePatch
     {
-        private static float _lastX, _lastY;
-
         private static void Postfix(Vector3 originalDelta, ref Vector3 __result)
         {
-            if (originalDelta.x != 0f) _lastX = 0f;
-            else __result.x = Filter(__result.x, ref _lastX);
-            if (originalDelta.y != 0f) _lastY = 0f;
-            else __result.y = Filter(__result.y, ref _lastY);
-        }
-
-        private static float Filter(float v, ref float last)
-        {
-            if (v == 0f) return 0f;
-            if (last != 0f && Mathf.Sign(v) != Mathf.Sign(last)) return 0f; // reversal of the previous nudge: hold
-            last = v;
-            return v;
+            if (originalDelta.x == 0f) __result.x = 0f;
+            if (originalDelta.y == 0f) __result.y = 0f;
         }
     }
 }
