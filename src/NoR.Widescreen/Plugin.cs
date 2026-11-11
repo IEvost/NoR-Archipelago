@@ -23,7 +23,7 @@ namespace NoR.Widescreen
     {
         public const string Guid = "nor.archipelago.widescreen";
         public const string Name = "NoR Widescreen";
-        public const string Version = "0.2.0";
+        public const string Version = "0.2.1";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         internal static ConfigEntry<string> Resolution;
@@ -51,7 +51,6 @@ namespace NoR.Widescreen
 
             CameraZoom.Create(Config);
             MosaicOrderFix.Create(Config);
-            CameraJitterProbe.Create();
             if (Mode.Value == AspectMode.Off) return;
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             SceneManager.sceneLoaded += (s, m) => UiFixer.FixAll();

@@ -22,7 +22,7 @@ namespace NoR.Localization
     {
         public const string Guid = "nor.archipelago.localization";
         public const string Name = "NoR English";
-        public const string Version = "0.2.0";
+        public const string Version = "0.2.1";
 
         internal static BepInEx.Logging.ManualLogSource Log;
         internal static TranslationTable Table;

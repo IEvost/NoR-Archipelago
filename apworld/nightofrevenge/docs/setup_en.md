@@ -52,7 +52,7 @@ Night of Revenge is not part of the official Archipelago release, so the host ge
 | G / hold Jump 2 s | Skip and respawn after a death or DeathLink |
 | hold Left Ctrl / gamepad Step | Fast-forward dialogue (stops at choices) |
 | PageUp / PageDown / Home | Camera zoom in / out / reset |
-| shown letters (or arrows + attack) | Grab QTE: break free; a wrong input costs 10% HP |
+| shown letters (or arrows + attack) | Grab QTE: break free; a wrong input costs 10% HP, the grabber drains HP meanwhile (settings: `GrabQte*`, `GrabDrainPerSecond` in `BepInEx/config/nor.archipelago.randomizer.cfg`) |
 | ` or F12 | **Server log** (full history: who sent what, joins/leaves, chat, hints; type chat/commands there) and **Console** tab (give items/keys if you are stuck) |
 
 ## Troubleshooting

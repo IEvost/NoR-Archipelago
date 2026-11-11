@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 - polish: grabs, camera, widescreen, translation
 - Typewriter text (opening narration, event dialogue, game-over texts) now rolls out in English instead of Japanese
   that switched to English only when the line was complete.
 - The potion-switch button no longer works while grabbed (QTE) or during the knockdown lockout.
