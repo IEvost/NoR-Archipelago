@@ -27,6 +27,8 @@
   area behind them on wide screens or zoomed out; rooms smaller than the view are centred.
 - Grab animations of randomized enemies are drawn at the player's depth: a grab object sorted below the player (its
   home area's layers) was hidden behind the scenery of the new area.
+- Camera zoom-out reveals more above, not below: the bottom of the view stays at the vanilla height, so the empty area
+  under levels (most areas have no camera floor) is no longer shown.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld

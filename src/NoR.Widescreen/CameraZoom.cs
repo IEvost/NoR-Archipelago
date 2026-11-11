@@ -28,6 +28,20 @@ namespace NoR.Widescreen
         internal static ConfigEntry<KeyCode> KeyIn, KeyOut, KeyReset;
 
         private float _vanillaHalfHeight = -1f;   // vanilla baseline (half screen height in world units)
+        internal static CameraZoom Instance;
+
+        /// <summary>How much taller than vanilla the current view is (half height, world units); 0 at zoom 1 or closer.</summary>
+        internal static float ExtraHalfHeight
+        {
+            get
+            {
+                var z = Instance;
+                var pc = ProCamera2D.Instance;
+                if (z == null || pc == null || z._vanillaHalfHeight <= 0f) return 0f;
+                // Current size, so zoom-ins (grabs, events) get no shift.
+                return Mathf.Max(0f, pc.ScreenSizeInWorldCoordinates.y * 0.5f - z._vanillaHalfHeight);
+            }
+        }
         private int _cameraId;
         private float _nextWatch;
 
@@ -45,6 +59,7 @@ namespace NoR.Widescreen
 
         private void Awake()
         {
+            Instance = this;
             SceneManager.sceneLoaded += (s, m) => StartCoroutine(ApplyAfterStart());
         }
 
@@ -291,6 +306,27 @@ namespace NoR.Widescreen
                 }
                 delta.y = y - c.y;
             }
+        }
+    }
+
+    /// <summary>
+    /// Zooming out grows the view up and down; most areas have no camera floor (the vanilla zoom never showed much below
+    /// the ground), so the empty area under the level became visible. While the camera moves, raise its follow offset by
+    /// the extra half height so all of the additional view goes upward and the bottom edge stays where vanilla has it.
+    /// The game's own OverallOffset values (events, grabs) are restored right after.
+    /// </summary>
+    [HarmonyPatch(typeof(ProCamera2D), "Move")]
+    internal static class ZoomOutUpwardPatch
+    {
+        private static void Prefix(ProCamera2D __instance, out float __state)
+        {
+            __state = CameraZoom.ExtraHalfHeight;
+            if (__state > 0f) __instance.OverallOffset.y += __state;
+        }
+
+        private static void Postfix(ProCamera2D __instance, float __state)
+        {
+            if (__state > 0f) __instance.OverallOffset.y -= __state;
         }
     }
 }
