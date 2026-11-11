@@ -94,7 +94,7 @@ namespace NoR.Randomizer
                 "Movement speed multiplier of enemies walking to a downed Aradia to grab her. 1 = vanilla.").Value);
             Gameplay.GrabQte.DrainPerSecond = Mathf.Clamp01(Config.Bind("Gameplay", "GrabDrainPerSecond", 0.03f,
                 "While a grab QTE is active, share of max HP drained every second. 0 = off.").Value);
-            Gameplay.GrabQte.EnemyHealBonus = Mathf.Max(0f, Config.Bind("Gameplay", "GrabEnemyHealBonus", 200f,
+            Gameplay.GrabQte.EnemyHealBonus = Mathf.Max(0f, Config.Bind("Gameplay", "GrabEnemyHealBonus", 25f,
                 "The grabbing enemy heals by the HP it drained (passive drain or a wrong QTE input) plus this amount.").Value);
             Gameplay.GrabQte.Create();
 

@@ -30,7 +30,7 @@ namespace NoR.Randomizer.Gameplay
         public static bool EscapeBlocked;
         public static float RushMultiplier = 1.8f;
         public static float DrainPerSecond = 0.03f;
-        public static float EnemyHealBonus = 200f;
+        public static float EnemyHealBonus = 25f;
 
         public static GrabQte Instance { get; private set; }
 
