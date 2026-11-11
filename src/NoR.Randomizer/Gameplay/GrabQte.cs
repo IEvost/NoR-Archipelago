@@ -90,7 +90,7 @@ namespace NoR.Randomizer.Gameplay
             if (DrainPerSecond > 0f && Time.time >= _nextDrain)
             {
                 _nextDrain += 1f;
-                if (Damage(pc, DrainPerSecond)) return;
+                if (Damage(pc, DrainPerSecond, false)) return;
             }
 
             string pressed = ReadInput(pc);
@@ -148,19 +148,22 @@ namespace NoR.Randomizer.Gameplay
         private void Wrong(playercon pc)
         {
             _flashWrongUntil = Time.unscaledTime + 0.4f;
-            if (Damage(pc, WrongInputDamage)) return;
+            if (Damage(pc, WrongInputDamage, true)) return;
             NewSequence();
         }
 
         /// <summary>
         /// Takes share * max HP from the player and heals the grabbing enemy by (damage dealt + EnemyHealBonus), capped at
-        /// its max HP. Returns true if the player died.
+        /// its max HP. Returns true if the player died. The passive drain is not lethal: it stops at the HP one wrong input
+        /// takes (10% by default), so only a failed input can kill.
         /// </summary>
-        private bool Damage(playercon pc, float share)
+        private bool Damage(playercon pc, float share, bool lethal)
         {
             var st = GameRefs.Status;
             if (st == null || share <= 0f) return false;
-            float dealt = Mathf.Min(st.Hp, st.MaxHp * share);
+            float floor = lethal ? 0f : st.MaxHp * WrongInputDamage;
+            float dealt = Mathf.Min(Mathf.Max(0f, st.Hp - floor), st.MaxHp * share);
+            if (dealt <= 0f) return false;
             st.Hp -= dealt;
             var grabber = Grabber();
             if (grabber != null && grabber.Hp > 0f)
