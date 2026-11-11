@@ -51,6 +51,7 @@ namespace NoR.Widescreen
 
             CameraZoom.Create(Config);
             MosaicOrderFix.Create(Config);
+            CameraJitterProbe.Create();
             if (Mode.Value == AspectMode.Off) return;
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             SceneManager.sceneLoaded += (s, m) => UiFixer.FixAll();
