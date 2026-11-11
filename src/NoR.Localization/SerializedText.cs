@@ -59,6 +59,14 @@ namespace NoR.Localization
             if (changed > 0) Plugin.Log.LogDebug("Serialized text replaced: " + changed);
         }
 
+        /// <summary>
+        /// Text translated while its menu was hidden could not be fitted then (no layout); fit it when it is shown.
+        /// </summary>
+        internal static void ApplyOnEnable(TMPro.TMP_Text tmp)
+        {
+            if (Apply(tmp) == 0 && Plugin.Table.IsTranslation(tmp.text)) FitToBox(tmp);
+        }
+
         internal static int Apply(TMPro.TMP_Text tmp)
         {
             var src = tmp.text;
@@ -78,12 +86,19 @@ namespace NoR.Localization
         /// </summary>
         internal static void FitToBox(TMPro.TMP_Text tmp)
         {
-            if (tmp == null || tmp.enableAutoSizing || !Fitted.Add(tmp.GetInstanceID())) return;
+            if (tmp == null || tmp.enableAutoSizing || Fitted.Contains(tmp.GetInstanceID())) return;
             var rt = tmp.rectTransform;
-            if (rt == null || rt.rect.height <= 0f || rt.rect.height > 80f) return; // dialogue boxes are taller - leave them
+            if (rt == null) return;
+            float h = rt.rect.height;
+            if (h <= 0f) return; // not laid out yet (inactive menu) - try again on the next set/enable
+            Fitted.Add(tmp.GetInstanceID());
+            if (h > 80f) return; // dialogue boxes are taller - leave them
             float size = tmp.fontSize;
+            // A box shorter than two lines is a one-line label: wrapping would push the second line over the next
+            // entry (teleport menu area names). Keep it on one line and let auto-size shrink it to the width.
+            if (h < size * 1.8f) tmp.enableWordWrapping = false;
             tmp.fontSizeMax = size;
-            tmp.fontSizeMin = Mathf.Max(10f, size * 0.6f);
+            tmp.fontSizeMin = Mathf.Max(10f, size * 0.5f);
             tmp.enableAutoSizing = true;
             if (Fitted.Count > 50000) Fitted.Clear();
         }
@@ -242,7 +257,7 @@ namespace NoR.Localization
     {
         private static void Postfix(TMPro.TMP_Text __instance)
         {
-            if (Plugin.Enabled) SerializedText.Apply(__instance);
+            if (Plugin.Enabled) SerializedText.ApplyOnEnable(__instance);
         }
     }
 
@@ -251,7 +266,7 @@ namespace NoR.Localization
     {
         private static void Postfix(TMPro.TMP_Text __instance)
         {
-            if (Plugin.Enabled) SerializedText.Apply(__instance);
+            if (Plugin.Enabled) SerializedText.ApplyOnEnable(__instance);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace NoR.Localization
         private readonly Dictionary<string, string> _byHash = new Dictionary<string, string>(StringComparer.Ordinal);
         private readonly HashSet<string> _unsafe = new HashSet<string>(StringComparer.Ordinal);
         private readonly Dictionary<string, string> _cache = new Dictionary<string, string>(StringComparer.Ordinal);
+        private readonly HashSet<string> _english = new HashSet<string>(StringComparer.Ordinal);
 
         public int Count { get { return _byHash.Count; } }
         public int Hits;
@@ -59,8 +60,12 @@ namespace NoR.Localization
                 string en = Unescape(raw.Substring(tab + 1));
                 if (en.Length == 0) continue; // untranslated placeholder
                 _byHash[hash] = en;
+                _english.Add(en);
             }
         }
+
+        /// <summary>True if s is one of the English strings of this table (text translated earlier).</summary>
+        public bool IsTranslation(string s) { return s != null && _english.Contains(s); }
 
         public bool IsUnsafe(string jp) { return _unsafe.Contains(Hash(jp)); }
 

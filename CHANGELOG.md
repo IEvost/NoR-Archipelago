@@ -16,6 +16,8 @@
   (dark squares, also with uncensor patches). Config `FixMosaicOrder`.
 - Widescreen: level sky backdrops (attached to the camera by SceneStartEffect, sized for 16:9) are scaled uniformly
   to cover wider screens - no more blank strips at the left/right edges.
+- UI: translated one-line labels (teleport menu area names and similar) stay on one line and shrink to fit instead of
+  wrapping over the next entry; labels in menus that were hidden at load are fitted when the menu opens.
 - **Downed rush**: enemies walking to a downed Aradia move faster (`DownedRushSpeed`, default 1.8, 1 = vanilla).
 
 ## 0.2.0 - feedback from the first real multiworld
